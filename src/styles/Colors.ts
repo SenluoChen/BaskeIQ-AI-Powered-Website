@@ -1,0 +1,18 @@
+export const Colors = {
+  primary: '#000000',
+  primaryHover: '#363636',
+  secondary: '#ffffff',
+  secondaryHover: '#363636',
+  third: '#ff7457',
+  brightBlue: '#76bff9',
+  brightBlueBackground: '#f6fbff',
+  green: '#17b26a',
+  violet: '#aa436f',
+  background: '#f4f4f4',
+  darkGrey: '#5D6C7B',
+  secondDarkGrey: '#dfd8d8',
+  white: '#FFFFFF',
+  red: '#c00000',
+  orange: '#ffc000',
+  brown: 'brown',
+};

@@ -1,0 +1,142 @@
+Item;libitem;kcal;energy_density;Groupe
+ALIMENT1;Boeuf;1,88649781135912;moderate;Viandes
+ALIMENT10;Hamburger;2,58322526218546;moderate;Viandes
+ALIMENT100;Biscuit apéritifs salés (hors mélange de fruits secs);4,92708363971866;high;Produits ultra-transformés
+ALIMENT101;Fruits oléagineux et graines salés ou non-salés (cacahuètes, amandes, noix, graines de lin etc.);6,03360149307509;high;Fruits à coque
+ALIMENT102;Sucre (hors édulcorant) (dans le café, le thé ou dans les yaourts etc.) (cuillerée à café);4;high;Produits ultra-transformés
+ALIMENT11;Foie (génisse, veau, volaille, etc.);1,7280440313927;moderate;Viandes
+ALIMENT119;Pomme (1 fruit);0,446000000000002;very low;Fruits
+ALIMENT12;Autres abats (rognons, tripes, boudin, andouillette, etc.);2,27605314100978;moderate;Viandes
+ALIMENT120;Poire (1 fruit);0,458000000000001;very low;Fruits
+ALIMENT121;Orange, mandarine (1 fruit);0,441667816213025;very low;Fruits
+ALIMENT122;Pamplemousse (demi);0,327000000000002;very low;Fruits
+ALIMENT123;Banane (1 fruit);0,881;low;Fruits
+ALIMENT124;Raisins (blanc ou noir) (1 portion moyenne);0,692472077490544;low;Fruits
+ALIMENT125;Cerises (1 portion moyenne);0,665000000000002;low;Fruits
+ALIMENT126;Melon (1 morceau);0,341000000000001;very low;Fruits
+ALIMENT127;Pêche, nectarine, brugnon, prune, abricot (1 fruit);0,442764764686143;very low;Fruits
+ALIMENT128;Fraises, framboises ou d'autres fruits rouges (1 portion moyenne);0,316123134044193;very low;Fruits
+ALIMENT129;Kiwi (1 fruit);0,497;very low;Fruits
+ALIMENT13;Pâté, rillettes;3,61266895355507;moderate;Charcuterie
+ALIMENT130;Ananas, mangue (1 portion moyenne);0,482427108363379;very low;Fruits
+ALIMENT131;Fruits en compote ou au sirop (1 portion moyenne);0,705232709207448;low;Fruits
+ALIMENT132;Fruits secs (1 portion moyenne);2,36649878732552;moderate;Fruits
+ALIMENT133;Carottes (râpées ou cuites);0,288821827749627;very low;Légumes
+ALIMENT134;Epinards;0,226000000000001;very low;Légumes
+ALIMENT135;Brocolis;0,232;very low;Légumes
+ALIMENT136;Choux de Bruxelles;0,231000000000001;very low;Légumes
+ALIMENT137;Chou (rouge, blanc ou vert);0,18147159959182;very low;Légumes
+ALIMENT138;Petit pois;0,707000000000004;low;Légumes
+ALIMENT139;Haricots verts, haricot beurre;0,253362205967713;very low;Légumes
+ALIMENT140;Courgettes, aubergines;0,114454801848122;very low;Légumes
+ALIMENT141;Asperges;0,168;very low;Légumes
+ALIMENT142;Chou-fleur;0,178;very low;Légumes
+ALIMENT143;Navets, rutabagas;0,178353786868694;very low;Légumes
+ALIMENT144;Potiron;0,1;very low;Légumes
+ALIMENT145;Artichaut;0,180000000000001;very low;Légumes
+ALIMENT146;Poireaux;0,202;very low;Légumes
+ALIMENT147;Tomate;0,200999999999999;very low;Légumes
+ALIMENT148;Avocat;1,36999999999999;low;Légumes
+ALIMENT149;Maïs;1,04;low;Légumes
+ALIMENT15;Choucroute garnie;1,3231;low;Charcuterie
+ALIMENT150;Betterave;0,425501477318482;very low;Légumes
+ALIMENT151;Poivrons rouge/ vert / jaune;0,245830954248141;very low;Légumes
+ALIMENT152;Salade verte;0,128;very low;Légumes
+ALIMENT153;Concombre, céleri;0,308708989641225;very low;Légumes
+ALIMENT154;Endives (en salade ou cuites), fenouil;0,114974298999748;very low;Légumes
+ALIMENT155;Oignons (dans une sauce, une tarte, une ratatouille, etc.);0,256767666577181;very low;Légumes
+ALIMENT156;Champignons;0,137400831210165;very low;Légumes
+ALIMENT157;Ail (dans un plat);0,925999999999999;low;Légumes
+ALIMENT158;Légumes secs (lentilles, fèves, pois cassés, pois chiches);1,05438340967721;low;Légumineuses
+ALIMENT16;Cassoulet;1,9305;moderate;Plats
+ALIMENT17;Poisson maigre;0,969528267326914;low;Poissons et fruits de mer
+ALIMENT18;Poisson gras (maquereau, hareng, anguille, etc.);1,77391620131379;moderate;Poissons et fruits de mer
+ALIMENT19;Fruits de mer (coquillages et crustacés);0,991359787852532;low;Poissons et fruits de mer
+ALIMENT2;Veau;1,93881296684131;moderate;Viandes
+ALIMENT20;Bâtonnets de poisson pané;2,03526716329586;moderate;Epices
+ALIMENT21;Produits à base de poisson (mousse, pâté, tarama, œufs);1,82031032617504;moderate;Poissons et fruits de mer
+ALIMENT22;Baguette de pain blanc ou pain de mie;2,76053412961512;moderate;Féculents et produits céréaliers
+ALIMENT23;Baguette de pain complet ou aux céréales ou de pain de mie;2,63084768479701;moderate;Féculents et produits céréaliers
+ALIMENT24;Autres types de pain (seigle etc.);2,4760739770055;moderate;Féculents et produits céréaliers
+ALIMENT25;Biscotte, petit-grillé, pain azyme;3,78086732808099;moderate;Féculents et produits céréaliers
+ALIMENT26;Céréales de type petit déjeuner;3,73005534610194;moderate;Féculents et produits céréaliers
+ALIMENT27;Pomme de terre à l'eau ou au four ou purée;0,886628208309457;low;Féculents et produits céréaliers
+ALIMENT28;Pommes de terre sautées à l'huile ou au beurre;1,5474;moderate;Féculents et produits céréaliers
+ALIMENT29;Salade de pommes de terre;0,813599999999997;low;Autres
+ALIMENT3;Porc;1,95454648407104;moderate;Viandes
+ALIMENT30;Frites;2,23812074733377;moderate;Féculents et produits céréaliers
+ALIMENT31;Riz blanc;1,2;low;Féculents et produits céréaliers
+ALIMENT32;Riz complet;1,34;low;Féculents et produits céréaliers
+ALIMENT33;Pâtes ordinaires;1,15;low;Féculents et produits céréaliers
+ALIMENT34;Pâtes complètes;0,920000000000002;low;Féculents et produits céréaliers
+ALIMENT35;Autres céréales par exemple, boulgour, couscous, orge perlé, quinoa, semoule;1,57761262149852;moderate;Féculents et produits céréaliers
+ALIMENT36;Raviolis ou lasagnes;1,25431111561369;low;Autres
+ALIMENT37;Pizza;2,39743198062488;moderate;Autres
+ALIMENT37_1;Crêpe salée garnie (1);1,96282848869554;moderate;Autres
+ALIMENT38;Lait entier (hors café, thé) (1 verre);0,65348073594547;low;Produits laitiers 
+ALIMENT4;Agneau;2,07488889579276;moderate;Viandes
+ALIMENT41;Lait de soja ou similaire (par exemple, avoine, amande, etc.) (1 verre);0,831620918781905;low;Produits laitiers 
+ALIMENT41_1;Lait aromatisé (par exemple, chocolat, frais) (1 verre);0,735431278845705;low;Ingrédients culinaires
+ALIMENT42;Yaourt au lait entier (1 pot);0,907615462325368;low;Produits laitiers 
+ALIMENT43;Yaourt au lait 1/2 écrémé (1 pot);0,693870271989226;low;Produits laitiers 
+ALIMENT44;Yaourt au lait à 0% (nature ou aux fruits ou aromatisé ou sucré) (1 pot);0,473028157886574;very low;Produits laitiers 
+ALIMENT45;Yaourt contenant des probiotiques / Yaourt contenant des probiotiques;0,725067155265931;low;Produits laitiers 
+ALIMENT46;Yaourt au soja ou similaire (par exemple, avoine, amande, etc.) (1 pot);0,488999999999999;very low;Produits laitiers 
+ALIMENT47;Yaourt à boire (nature ou aromatisé) (1 petit bouteille);0,817177957840699;low;Produits laitiers 
+ALIMENT48;Fromage blanc à 40 % de matière grasse (nature, fruits, aromatisé, sucré) (1/2 bol);1,16179494361711;low;Produits laitiers 
+ALIMENT49;Fromage blanc à 20 % de matière grasse (nature, fruits, aromatisé, sucré) (1/2 bol);0,771384870096332;low;Produits laitiers 
+ALIMENT5;Volaille (dinde, poulet, canard, etc.) ou lapin;1,7899697858028;moderate;Viandes
+ALIMENT50;Fromage blanc à 0 % de matière grasse (nature, fruits, aromatisé, sucré) (1/2 bol);0,477482325795102;very low;Produits laitiers 
+ALIMENT51;Petit suisse (nature, Petits filous, Petits musclés, etc) (1 petit pot);1,15962481860075;low;Produits laitiers 
+ALIMENT52;Entremets (crème dessert type Danette, Liégeois, mousse, etc.) (1 pot);1,39077410835655;low;Produits laitiers 
+ALIMENT53;Crème fraîche entière (1 cuillère à soupe);2,97;moderate;Matières grasses animales d'ajout
+ALIMENT54;Crème fraîche allégée (1 cuillère à soupe);1,72;moderate;Matières grasses animales d'ajout
+ALIMENT55;Crème chantilly (1 cuillère à soupe);3,31308190407665;moderate;Produits ultra-transformés
+ALIMENT56;Brie, Camembert, Munster, Pont-l'Evêque…;2,96488914814779;moderate;Produits laitiers 
+ALIMENT57;Gouda, Emmental, Gruyère, Comté, Beaufort….;3,87321144132227;moderate;Produits laitiers 
+ALIMENT58;Fromage Fondu (1 portion moyenne);2,74376445559774;moderate;Produits laitiers 
+ALIMENT59;Fromage allégé (1 portion moyenne);2,75;moderate;Produits laitiers 
+ALIMENT6;Lardons, jambon cru;2,5607721436904;moderate;Charcuterie
+ALIMENT60;Fromage Frais (1 portion moyenne);3,42151399385101;moderate;Produits laitiers 
+ALIMENT61;Oeuf à la coque, dur sur le plat ou poché (1);1,62918394143167;moderate;Volaille et œufs
+ALIMENT62;Oeuf en omelette (1 portion moyenne);1,62;moderate;Herbes
+ALIMENT63;Quiche ou tarte salée (1 portion moyenne);2,56618272292557;moderate;Charcuterie
+ALIMENT64;Beurre (nature ou demi-sel);7,44769065338864;high;Matières grasses animales d'ajout
+ALIMENT65;Beurre allégé (nature ou demi-sel);3,53947836218312;moderate;Matières grasses animales d'ajout
+ALIMENT66;Margarine à environ 70-80% de matière grasse;7,38094973295278;high;Huiles végétales
+ALIMENT67;Margarine allégée à environ 50-60% de matière grasse;5,37345691561077;high;Huiles végétales
+ALIMENT68;Margarine allégée à 40% ou moins de matière grasse;3,51;moderate;Huiles végétales
+ALIMENT69;Margarine contenant des phytostérols(par exemple Fruit d’or Pro’activ);3,31;moderate;Huiles végétales
+ALIMENT69_1;Huile (par exemple, Olive, Colza, Tournesol, etc.);8,98998914261256;high;Huiles végétales
+ALIMENT7;Jambon blanc ou filet de bacon;1,19553131655723;low;Charcuterie
+ALIMENT70;Soupe de légumes (1 portion moyenne);0,363426128769218;very low;Soupe
+ALIMENT71;Soupe à la viande ou de poisson (1 portion moyenne);0,617599840850185;low;Féculents et produits céréaliers
+ALIMENT72;Sauce (type tomate, bolognaise, carbonara) (1 cuillère à soupe);0,88160164349374;low;Produits ultra-transformés
+ALIMENT73;Sauce vinaigrette (du commerce ou maison) (1 cuillère à soupe);4,92052456613127;high;Huiles végétales
+ALIMENT74;Sauce froid (type tartare, béarnaise, américaine) (1 cuillère à soupe);5,22113216341218;high;Produits ultra-transformés
+ALIMENT75;Mayonnaise (du commerce ou maison) (1 cuillère à café);7,04439821807234;high;Produits ultra-transformés
+ALIMENT76;Ketchup (1 cuillère à café);1,07;low;Produits ultra-transformés
+ALIMENT77;Moutarde (1 cuillère à café);1,75;moderate;Produits ultra-transformés
+ALIMENT78;Miel, confiture ou marmelade (1 cuillère à café);2,35139666295358;moderate;Produits ultra-transformés
+ALIMENT79;Pâte à tartiner, type ‘Nutella’ (1 cuillère à café);5,1;high;Produits ultra-transformés
+ALIMENT8;Saucisson (saucisson sec), cervelas ou mortadelle;3,85328098745858;moderate;Charcuterie
+ALIMENT80;Viennoiserie (croissant, pain au chocolat) (1);4,11501451307105;high;Produits ultra-transformés
+ALIMENT81;Pâtisserie à la crème (1 part);2,68361090446617;moderate;Produits ultra-transformés
+ALIMENT82;Brioche (individuelle ou en tranche);3,57049999999998;moderate;Produits ultra-transformés
+ALIMENT83;Biscuit sec au chocolat (1);4,65252438541069;high;Produits ultra-transformés
+ALIMENT84;Biscuit sec nature (petit beurre, galette) (1);4,42316651895564;high;Produits ultra-transformés
+ALIMENT85;Petit gâteau (barquettes, figolu, etc.);3,8799900264362;moderate;Produits ultra-transformés
+ALIMENT86;Cake ou quatre-quarts, madeleine;4,05636483116665;high;Produits ultra-transformés
+ALIMENT87;Brownie, gâteau au chocolat;4,22648436379037;high;Produits ultra-transformés
+ALIMENT88;Tarte aux fruits (1 part);2,1127517842743;moderate;Produits ultra-transformés
+ALIMENT89;Flan (1 part);1,3867385270369;low;Produits ultra-transformés
+ALIMENT9;Saucisse (merguez, chipolatas);3,17996053280972;moderate;Charcuterie
+ALIMENT90;Crème caramel, crème brûlée;1,91687915196765;moderate;Produits ultra-transformés
+ALIMENT91;Crêpe sucrée ou gaufre (1);2,31156623326137;moderate;Produits ultra-transformés
+ALIMENT92;Glace ou sorbet;1,93217886594575;moderate;Produits ultra-transformés
+ALIMENT93;Chocolat en tablette (noir, au lait, aux noisettes, etc.);5,19872974008098;high;Produits ultra-transformés
+ALIMENT94;Barre chocolatée (Mars, Twix etc.) (1 barre);4,9072003424409;high;Produits ultra-transformés
+ALIMENT95;Barre aux céréales (Granny, etc.) (1 barre);4,16953856056231;high;Produits ultra-transformés
+ALIMENT96;Bonbons;3,51166932800327;moderate;Produits ultra-transformés
+ALIMENT98;Chips;5,21549482830194;high;Produits ultra-transformés
+ALIMENT99;Pop-corn;3,52999999999999;moderate;Produits ultra-transformés

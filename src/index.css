@@ -1,0 +1,62 @@
+@font-face {
+  font-family: 'Muli';
+  src: url('/src/assets/fonts/Muli-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Muli-Bold';
+  src: url('/src/assets/fonts/Muli-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Muli-Italic';
+  src: url('/src/assets/fonts/Muli-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Muli-Light';
+  src: url('/src/assets/fonts/Muli-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Muli-SemiBold';
+  src: url('/src/assets/fonts/Muli-SemiBold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-family: 'Muli', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Muli-bold', 'Muli-Italic', 'Muli-Light', 'Muli-SemiBold',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.gauge-component-2 text {
+  display: none;
+}
+
+.ionic-icon-24px > * {
+  stroke-width: 24px;
+}
+
+.MuiSlider-mark {
+  width: 10px;
+  height: 100%;
+
+}

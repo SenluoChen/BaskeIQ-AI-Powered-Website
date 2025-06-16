@@ -1,0 +1,132 @@
+{
+  "appName": "Badminton",
+  "page": {
+    "welcomePage": {
+      "signUpLabel": "S'inscrire",
+      "signInLabel": "Se connecter",
+      "home": {
+        "title": "Votre santé sous tous les angles, personnalisée"
+      },
+      "signUp": {
+        "title": "Créer un compte",
+        "form": {
+          "lastName": "Nom",
+          "firstName": "Prénom",
+          "phoneNumber": "Numéro de téléphone",
+          "zipCode": "Code postal",
+          "country": "Pays",
+          "email": "Adresse mail",
+          "password" : "Mot de passe",
+          "confirmPassword": "Confirmation de mot de passe"
+        },
+        "alreadyAccount": "Déjà un compte ?"
+      },
+      "signIn": {
+        "title": "Bienvenue",
+        "subTitle": "Rentre tes identifiants",
+        "form": {
+          "mail": "Adresse mail",
+          "password" : "Mot de passe"
+        },
+        "forgotPassword": "Mot de passe oublié ?",
+        "alreadyAccount": "Vous n'avez pas encore de compte ?",
+        "signUpFree": "Inscrivez-vous gratuitement"
+      },
+      "forgotPassword": {
+        "title1": "Changement de mot de passe",
+        "description1": "Entrer votre email afin que l'on puisse vous envoyer un email avec un code de vérification",
+        "title2": "Changement de mot de passe",
+        "description2": "Un email vous à été envoyé avec un code de vérification afin de changer votre mot de passe",
+        "form": {
+          "mail": "Email",
+          "code": "Code",
+          "password" : "Mot de passe",
+          "confirmPassword": "Confirmation de mot de passe"
+        },
+        "changePassword": "Changer le mot de passe",
+        "sendCode": "Envoyer un code",
+        "back": "Retour"
+      },
+      "confirmSignUp": {
+        "title": "Confirmer votre compte",
+        "description": "Vous avez recu un code dans votre boite mail, veuillez le rentrer ci-dessous.",
+        "form": {
+          "code": "Code"
+        },
+        "confirm": "Confirmer",
+        "resendCode":"Renvoyer le code"
+      },
+      "confirmSignIn": {
+        "title": "Confirmer votre compte",
+        "description": "Vous devez maintenant choisir un nouveau mot de passe",
+        "form": {
+          "password" : "Mot de passe",
+          "confirmPassword": "Confirmation de mot de passe"
+        },
+        "changePassword": "Changer le mot de passe"
+      }
+    },
+    "root": {
+      "dashboardLabel": "Tableau de bord",
+      "taskLabel": "Taches",
+      "reportLabel": "Bilan",
+      "shortAppointmentLabel": "Rdv",
+      "appointmentLabel": "Rendez-vous",
+      "resourceLabel": "Ressources",
+      "biologyLabel": "Biologie",
+      "settingsLabel": "Paramètre",
+      "extendLabel": "Agrandir",
+      "reduceLabel": "Réduire",
+      "scanLabel": "Scan",
+      "logout": "Se deconnecter"
+    },
+    "error": {
+      "title": "Oups!",
+      "description": "Désolé, une érreur est arrivé"
+    },
+    "signIn": {
+      "title": "Badminton pro"
+    },
+    "firstSign": {
+      "title": "Confirmation mot de passe"
+    }
+  },
+  "global": {
+    "closeModal": "Fermer"
+  },
+  "label": {
+    "mail": "Email",
+    "password": "Mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmation nouveau mot de passe",
+    "changePassword": "Changer de mot de passe",
+    "code": "Code de vérification",
+    "sendCode": "Envoyer un code",
+    "back": "Retour",
+    "forgotPassword": "J'ai oublié mon mot de passe",
+    "signIn": "S'identifier"
+  },
+  "error": {
+    "missing": {
+      "mail": "Veuillez entrer un nom email",
+      "password": "Veuillez entrer un mot de passe",
+      "code": "Veuillez entrer un code de confirmation",
+      "confirmPassword": "Veuillez entrer un mot de passe de confirmation"
+    },
+    "error": "Erreur",
+    "errorTryAgain": "Une erreur s’est produite. Veuillez réessayer ultérieurement.",
+    "errorContactSupport": "Une erreur inconnue est arrivé, contacter le support",
+    "errorBadIdentification": "Vous avez utiliser les mauvais identifiants",
+    "errorUserNotConfirmed": "Vous n'avez pas confirmer votre compte",
+    "errorBadCode": "Vous n'avez pas entrer le bon code de vérification",
+    "errorBadStatus": "Cette application est destiné au patient",
+    "errorLimitExceeded": "Vous avez tenté cette opération trop de fois, essayer plus tard",
+    "errorNotSamePassword": "Les deux mots de passe doivent être similaire",
+    "errorExpiredSession": "Votre session à expiré",
+    "errorUsernameAlreadyExist": "Ce mail est déjà utilisé",
+    "errorBadPasswordFormat": "Votre mot de passe doit contenir une lettre minuscule et majuscule, ainsi qu'un chiffre"
+  },
+  "forgotPassword": {
+    "verification_code_sent_message": "Un code de vérification vous a été envoyé"
+  }
+}
