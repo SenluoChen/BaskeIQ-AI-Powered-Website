@@ -55,8 +55,18 @@ import {
 import { logoutAll } from '../store/actions';
 import { signOut } from 'aws-amplify/auth';
 import { NotificationItem } from '../types/Notification.type';
+import ChatIcon from '@mui/icons-material/Chat'; // ✅ 新增這行
+import ChatPreviewDrawer from '../components/chat/ChatPreviewDrawer';
+import gamenews from '../components/Games/gamenews'; // 🔽 加上這行
 
-const drawerWidth = 275;
+import { DrawerProps as MuiDrawerProps } from '@mui/material/Drawer';
+import {
+  
+  Grid, // ✅ 新增這一行
+} from '@mui/material';
+
+
+const drawerWidth = 450;
 
 const MobileMain = styled('main')(({ theme }) => ({
   flexGrow: 1,
@@ -106,6 +116,7 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  backgroundColor: 'linear-gradient(145deg, #F15A24, #A14424);!important',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -125,30 +136,39 @@ const AppBar = styled(MuiAppBar, {
   ],
 }));
 
-const ComputerDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    variants: [
-      {
-        props: ({ open }) => open,
-        style: {
-          ...openedMixin(theme),
-          '& .MuiDrawer-paper': openedMixin(theme),
-        },
+const ComputerDrawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<MuiDrawerProps & { open?: boolean }>(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
+  ...(open
+    ? {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': {
+        ...openedMixin(theme),
+        backgroundColor: '#f5f5f5',
       },
-      {
-        props: ({ open }) => !open,
-        style: {
-          ...closedMixin(theme),
-          '& .MuiDrawer-paper': closedMixin(theme),
-        },
+    }
+    : {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': {
+        ...closedMixin(theme),
+        backgroundColor: '#f5f5f5',
       },
-    ],
-  }),
-);
+    }),
+}));
+
+
+interface ChatMessage {
+  id: number;
+  sender: string;
+  content: string;
+  unread: boolean;
+  avatarUrl?: string;
+}
+
 
 export default function Root() {
   const user = useSelector(userSelector)
@@ -156,12 +176,34 @@ export default function Root() {
   const [value, setValue] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [open, setOpen] = useState(false);
+  const [isChatPreviewOpen, setIsChatPreviewOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: 1,
+      sender: 'Le goat',
+      content: 'Ball out tonight?',
+      unread: true,
+      avatarUrl: '/lebron.avif',
+    },
+    {
+      id: 2,
+      sender: 'Wemby',
+      content: 'Let’s catch up tomorrow.',
+      unread: false,
+      avatarUrl: '/Victor-Wembanyama-Portrait.webp',
+    },
+    {
+      id: 3,
+      sender: 'Steph',
+      content: 'Gonna hit 20 threes on you',
+      unread: false,
+      avatarUrl: '/i.png',
+    },
+  ]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null);
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
-
-      
       id: 1,
       title: "Mise à jour",
       description: "Nouvelle mise à jour disponible. Cliquez pour voir les détails.",
@@ -231,7 +273,7 @@ export default function Root() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -240,17 +282,19 @@ export default function Root() {
 
   const [getUser] = useGetUserMutation();
 
-  const navigationItems = [
-    {
-      id: 'appointment',
-      label: isMobile ? t('page.root.shortAppointmentLabel') as string : t('page.root.appointmentLabel') as string,
-      icon: <CalendarMonthIcon sx={{ color: 'black' }} />,
-      function: () => {
-        navigate('/root/medicalAppointment');
-      },
-      disable: false
-    }
-  ];
+  const navigationItems: any[] = [];
+  
+  const RoundToggleButton = styled(IconButton)(({ theme }) => ({
+    backgroundColor: '#e0e0e0',
+    borderRadius: '50%',
+    width: 36,
+    height: 36,
+    boxShadow: theme.shadows[2],
+    marginLeft: 'auto',
+    '&:hover': {
+      backgroundColor: '#d5d5d5',
+    },
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -277,7 +321,6 @@ export default function Root() {
   }, [dispatch, getUser, navigate, setIsError, setIsLoading, userHasAuthenticated]);
 
   const drawer = (
-    
     <div>
       <List>
         {navigationItems.map((item) => (
@@ -293,6 +336,7 @@ export default function Root() {
       </List>
     </div>
   );
+
 
   return (
   
@@ -321,13 +365,26 @@ export default function Root() {
 
           {/* Logo et Titre */}
           <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate('/root/dashboard')}>
-            <img src={'/assets/logo/logo.png'} height={40} width={40} alt="logo" />
+            <img src={'/assets/logo/logo.png'} height={30} width={30} alt="logo" />
             <Typography variant="h5" sx={{ pl: 1 }} noWrap component="div">
-            Badminton
+            BasketIQ
             </Typography>
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
+
+          <ChatPreviewDrawer
+            open={isChatPreviewOpen}
+            onClose={() => setIsChatPreviewOpen(false)}
+            messages={chatMessages}
+          />
+
+          {/* Chat Preview Button */}
+          <IconButton color="inherit" onClick={() => setIsChatPreviewOpen(true)}>
+            <Badge badgeContent={2} color="error">
+              <ChatIcon />
+            </Badge>
+          </IconButton>
 
           {/* Bouton Notifications */}
           <IconButton color="inherit" onClick={handleNotificationsOpen}>
@@ -335,6 +392,7 @@ export default function Root() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
           <Menu
             anchorEl={notificationAnchorEl}
             open={Boolean(notificationAnchorEl)}
@@ -413,21 +471,108 @@ export default function Root() {
         isMobile ? (
           null
         ) : (
-          <ComputerDrawer
-            variant={"permanent"}
-            anchor="left"
-            open={open}
-          >
-            <DrawerHeader>
-              <IconButton onClick={handleDrawerClose}>
-                { isMobile ? theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon /> : theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-              </IconButton>
-            </DrawerHeader>
-            <Divider />
-            <List>
-              {drawer}
-            </List>
-          </ComputerDrawer>
+
+
+          <Box sx={{ marginTop: '100px' }}>
+            <ComputerDrawer
+              open={open}
+              variant="permanent"
+              anchor="left"
+              sx={{
+                backgroundColor: '#f2f2f7', // 🍎 Apple-style gray
+                borderRight: '1px solidrgb(52, 52, 52)' // ✅ 加邊界讓它更清爽
+              }}
+            >
+              {/* 開合按鈕區塊 */}
+              <DrawerHeader sx={{ justifyContent: 'flex-end', px: 2 }}>
+                <Box
+                  onClick={open ? handleDrawerClose : handleDrawerOpen}
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    backgroundColor: '#e0e0e0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: 2,
+                    '&:hover': {
+                      backgroundColor: '#d5d5d5',
+                    },
+                  }}
+                >
+                  {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </Box>
+              </DrawerHeader>
+
+              {/* 比賽訊息區塊 */}
+              <List sx={{ px: 1, pt: 2 }}>
+                {[
+                  { date: '6/15', day: 'Mardi', place: 'Terrain Villejuif', interest: 8 },
+                  { date: '6/18', day: 'Vendredi', place: 'Gymnase Ivry', interest: 5 },
+                  { date: '6/20', day: 'Dimanche', place: 'Palais des Sports', interest: 12 },
+                  { date: '6/22', day: 'Mercredi', place: 'Paris 13e', interest: 7 },
+                ].map((game, index) => (
+                  <ListItem
+                    key={index}
+                    sx={{
+                      mb: 2,
+                      py: open ? 2 : 1,
+                      borderRadius: 2,
+                      boxShadow: 1,
+                      bgcolor: '#fff',
+                    }}
+                  >
+                    <Grid
+                      container
+                      spacing={1}
+                      alignItems="center"
+                      wrap="nowrap"
+                      sx={{
+                        minHeight: open ? 72 : 48,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      <Grid item xs={open ? 4 : 12}>
+                        <Typography
+                          variant="body2"
+                          noWrap
+                          sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+                        >
+                          {game.place}
+                        </Typography>
+                        <Typography variant="caption">{game.day}</Typography>
+                      </Grid>
+
+                      {open && (
+                        <Grid item xs={5}>
+                          <Typography variant="body2" noWrap>
+                            {game.place}
+                          </Typography>
+                        </Grid>
+                      )}
+
+                      {open && (
+                        <Grid item xs={3} textAlign="right">
+                          <Typography variant="body2" color="primary" fontWeight="medium">
+                            {game.interest} intéressés
+                          </Typography>
+                        </Grid>
+                      )}
+                    </Grid>
+                  </ListItem>
+                ))}
+              </List>
+
+              {/* 分隔線 + 其他 drawer 選單項目 */}
+              <Divider sx={{ my: 2 }} />
+              <List>{drawer}</List>
+            </ComputerDrawer>
+          </Box>
+
         )
       }
       
