@@ -20,7 +20,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../components/authentication/account';
 import { AppDispatch } from '../store/store';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -265,7 +264,6 @@ export default function Root() {
     setOpen(false);
   };
 
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { userHasAuthenticated, setIsLoading, setIsError, isError, isLoading } =
@@ -424,7 +422,7 @@ export default function Root() {
 
           {/* Avatar + Menu Profil */}
           <IconButton onClick={handleProfileMenuOpen} sx={{ ml: 2 }}>
-            <Avatar alt={user?.userProfile?.firstName} src="/assets/avatar.jpg" />
+            <Avatar alt={user?.userProfile?.username} src={user.userProfile?.imageUrl} />
           </IconButton>
           <Menu sx={{p: 5}} anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
             <MenuItem

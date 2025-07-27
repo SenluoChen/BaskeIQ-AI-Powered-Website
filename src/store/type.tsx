@@ -3,6 +3,7 @@ import { User } from '../types/User.type';
 
 export type UserState = {
   userProfile: User | undefined;
+  authenticated: boolean;
 }
 
 export type ErrorState = {

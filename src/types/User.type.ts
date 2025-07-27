@@ -1,10 +1,10 @@
 export interface User {
+  username: string;
   email: string;
-  birthdate: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  licenseNumber: string;
+  position: string;
+  timestamp: number;
+  height: number;
+  weight: number;
   imageUrl: string;
 }
 

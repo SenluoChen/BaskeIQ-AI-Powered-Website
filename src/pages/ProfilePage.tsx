@@ -1,14 +1,17 @@
-import React from 'react';
 import { Avatar, Box, Container, Typography, Divider, Grid, Paper } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { userSelector } from '../store/selectors/userSelector';
 
 const ProfilePage: React.FC = () => {
-  const user = {
-    name: 'Senluo',
-    email: 'ray191714@gmail.com',
-    avatarUrl: '/sga.webp',
-    position: 'Shooting Guard',
-    height: "185 cm",
-    weight: "78 kg",
+  const user = useSelector(userSelector).userProfile;
+
+  const userData = {
+    name: user?.username ?? 'Inconnu',
+    email:  user?.email ?? 'Inconnu',
+    avatarUrl: user?.imageUrl,
+    position:  user?.position ?? 'Inconnu',
+    height:  user?.height ?? 'Inconnu',
+    weight:  user?.weight ?? 'Inconnu',
     avgPoints: 18.6,
     avgAssists: 4.2,
     avgRebounds: 5.3,
@@ -27,7 +30,7 @@ const ProfilePage: React.FC = () => {
         {/* 頂部個人資訊 */}
         <Box textAlign="center" mb={3}>
           <Avatar
-            src={user.avatarUrl}
+            src={userData.avatarUrl}
             sx={{ 
               width: 100, 
               height: 100, 
@@ -35,10 +38,10 @@ const ProfilePage: React.FC = () => {
               mb: 2 
             }}
           />
-          <Typography variant="h5">{user.name}</Typography>
-          <Typography color="text.secondary">{user.email}</Typography>
+          <Typography variant="h5">{userData.name}</Typography>
+          <Typography color="text.secondary">{userData.email}</Typography>
           <Typography sx={{ mt: 1, fontWeight: 'bold' }}>
-            {user.position}
+            {userData.position}
           </Typography>
         </Box>
 
@@ -49,32 +52,32 @@ const ProfilePage: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <Typography sx={{ fontWeight: 1000 }}>Height</Typography>
-              <Typography>{user.height}</Typography>
+              <Typography>{userData.height}</Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography sx={{ fontWeight: 1000 }}>Weight</Typography>
-              <Typography>{user.weight}</Typography>
+              <Typography>{userData.weight}</Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography sx={{ fontWeight: 1000 }}>Average Points</Typography>
-              <Typography>{user.avgPoints}</Typography>
+              <Typography>{userData.avgPoints}</Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography sx={{ fontWeight: 1000 }}>Assists</Typography>
-              <Typography>{user.avgAssists}</Typography>
+              <Typography>{userData.avgAssists}</Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography sx={{ fontWeight: 1000 }}>Rebounds</Typography>
-              <Typography>{user.avgRebounds}</Typography>
+              <Typography>{userData.avgRebounds}</Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography sx={{ fontWeight: 1000 }}>Games Played</Typography>
-              <Typography>{user.totalGames}</Typography>
+              <Typography>{userData.totalGames}</Typography>
             </Grid>
           </Grid>
         </Box>
