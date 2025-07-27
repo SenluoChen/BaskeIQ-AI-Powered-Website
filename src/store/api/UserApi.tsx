@@ -6,7 +6,7 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getUser: builder.mutation<User, void>({
+    getUser: builder.mutation<User | null, void>({
       query: () => `/user`,
     }),
  

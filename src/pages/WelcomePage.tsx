@@ -62,11 +62,6 @@ export default function WelcomePage() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [formValues, setFormValues] = useState({
-    lastName: '',
-    firstName: '',
-    phoneNumber: '',
-    zipCode: '',
-    country: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -120,11 +115,6 @@ export default function WelcomePage() {
           options: {
             userAttributes: {
               email: formValues['email'].toLowerCase() as string,
-              family_name: formValues['lastName'] as string,
-              name: formValues['firstName'] as string,
-              'custom:phone': formValues['phoneNumber'] as string,
-              'custom:postal_code': formValues['zipCode'] as string,
-              'custom:country': formValues['country'] as string,
             },
           },
         });
@@ -541,10 +531,10 @@ export default function WelcomePage() {
           <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ mt: 8 }}>
                 Créer un compte
           </Typography>
-          <Box sx={{display: 'flex', flexDirection: 'column'}} component="form" onSubmit={handleSubmitSignUp} noValidate>
-            <Grid container spacing={2}>
-              {['lastName', 'firstName', 'phoneNumber', 'zipCode', 'country', 'email', 'password', 'confirmPassword'].map((field, index) => (
-                <Grid item xs={12} sm={6} key={index}>
+          <Box sx={{display: 'flex', flexDirection: 'column',alignItems: 'center', justifyContent: 'center'}} component="form" onSubmit={handleSubmitSignUp} noValidate>
+            <Grid container spacing={2} maxWidth={400}>
+              {['email', 'password', 'confirmPassword'].map((field, index) => (
+                <Grid item xs={12} key={index}>
                   <TextField
                     required
                     fullWidth

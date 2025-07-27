@@ -9,12 +9,10 @@ export interface User {
 }
 
 export interface PostUser {
-  email: string;
-  birthdate: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  licenseNumber: string;
+  username: string;
+  position: 'Point Guard' | 'Shooting Guard' | 'Small Forward' | 'Power Forward' | 'Center'
+  height: number;
+  weight: number;
   filename: string;
 }
 

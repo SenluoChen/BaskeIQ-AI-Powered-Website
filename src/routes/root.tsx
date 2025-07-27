@@ -9,7 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MenuIcon from '@mui/icons-material/Menu';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import {
   Close,
   Logout as LogoutIcon,
@@ -55,15 +54,15 @@ import {
 import { logoutAll } from '../store/actions';
 import { signOut } from 'aws-amplify/auth';
 import { NotificationItem } from '../types/Notification.type';
-import ChatIcon from '@mui/icons-material/Chat'; // ✅ 新增這行
+import ChatIcon from '@mui/icons-material/Chat';
 import ChatPreviewDrawer from '../components/chat/ChatPreviewDrawer';
-import gamenews from '../components/Games/gamenews'; // 🔽 加上這行
 
 import { DrawerProps as MuiDrawerProps } from '@mui/material/Drawer';
 import {
   
   Grid, // ✅ 新增這一行
 } from '@mui/material';
+import UserSetupModal from '../components/modal/UserSetupModal';
 
 
 const drawerWidth = 450;
@@ -177,6 +176,7 @@ export default function Root() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [open, setOpen] = useState(false);
   const [isChatPreviewOpen, setIsChatPreviewOpen] = useState(false);
+  const [showUserSetupModal, setShowUserSetupModal] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: 1,
@@ -217,7 +217,6 @@ export default function Root() {
       route: "/messages",
       read: false
     }
-    // ... ajouter d'autres notifications si besoin
   ]);
 
   const handleProfileMenuOpen = (event: MouseEvent<HTMLButtonElement>) => {
@@ -236,19 +235,16 @@ export default function Root() {
     setNotificationAnchorEl(null);
   };
 
-  // Action lors du clic sur une notification (navigation vers une page)
   const handleNotificationClick = (notification: NotificationItem) => {
     navigate(notification.route);
     handleNotificationsClose();
   };
 
-  // Suppression d'une notification sans déclencher l'action de navigation
   const handleDeleteNotification = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   };
 
-  // Marquer toutes les notifications comme lues
   const handleMarkAllAsRead = () => {
     setNotifications((prev) =>
       prev.map((notif) => ({ ...notif, read: true }))
@@ -260,11 +256,6 @@ export default function Root() {
     dispatch(logoutAll());
     await signOut();
   };
-  /*
-  const subscription = user.subscription?.find(
-    (item) => item.subscription_type === 'subscription'
-  );
-  */
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -284,33 +275,24 @@ export default function Root() {
 
   const navigationItems: any[] = [];
   
-  const RoundToggleButton = styled(IconButton)(({ theme }) => ({
-    backgroundColor: '#e0e0e0',
-    borderRadius: '50%',
-    width: 36,
-    height: 36,
-    boxShadow: theme.shadows[2],
-    marginLeft: 'auto',
-    '&:hover': {
-      backgroundColor: '#d5d5d5',
-    },
-  }));
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const userResponse = await getUser().unwrap();
-        dispatch(setUser(userResponse));
+        if(userResponse === null) {
+          setShowUserSetupModal(true);
+        } else {
+          dispatch(setUser(userResponse));
+        }
       } catch (error: any) {
         console.error('🔴 getUser failed:', error);
 
-        // 如果是未授權，跳轉回首頁或登入頁
         if (error?.status === 401 || error?.data?.message === 'Unauthorized') {
           userHasAuthenticated(false);
           navigate('/');
         } else {
-          setIsError(true); // 其他錯誤顯示錯誤畫面
+          setIsError(true);
         }
       } finally {
         setIsLoading(false);
@@ -629,6 +611,7 @@ export default function Root() {
           </Box>
         )
       }
+      <UserSetupModal open={showUserSetupModal} onClose={() => setShowUserSetupModal(false)} />
     </Box>
   );
 }
