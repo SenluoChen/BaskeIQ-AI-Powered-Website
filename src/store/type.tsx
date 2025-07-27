@@ -1,4 +1,4 @@
-import { MatchType } from '../pages/DashboardPage';
+import { Match } from '../types/Match.type';
 import { User } from '../types/User.type';
 
 export type UserState = {
@@ -10,9 +10,9 @@ export type ErrorState = {
   error: string;
 };
 
-export interface MatchState {
-  matches: MatchType[];
-}
+export type MatchState = {
+  matches: Match[];
+};
 
 export type RootState = {
   user: UserState;

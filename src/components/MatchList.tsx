@@ -1,16 +1,11 @@
 import React from 'react';
 import { Paper, Typography, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Colors } from '../styles/Colors';
-
-type MatchType = {
-  id: number;
-  name: string;
-  date: string;
-};
+import { Match } from '../types/Match.type';
+import { formatDateFromSeconds } from '../utils/data.utils';
 
 interface MatchListProps {
-  matches: MatchType[];
+  matches: Match[];
 }
 
 const MatchList: React.FC<MatchListProps> = ({ matches }) => {
@@ -24,24 +19,24 @@ const MatchList: React.FC<MatchListProps> = ({ matches }) => {
             elevation={3}
             sx={{
               p: 2,
-              borderRadius: '12px', // 🍎 Apple-style 圓角
-              backgroundColor: '#ffffff', // 保持白色卡片
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)', // 柔和陰影
+              borderRadius: '12px',
+              backgroundColor: '#ffffff',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
               cursor: 'pointer',
               transition: 'all 0.3s ease-in-out',
               '&:hover': {
-                backgroundColor: '#f0f0f5', // hover 感更清爽
-                transform: 'translateY(-2px)', // 微微抬起
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)', // 加強陰影
+                backgroundColor: '#f0f0f5',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
               },
             }}
             onClick={() => navigate(`/root/match/${match.id}`)}
           >
             <Typography variant="h6" sx={{ fontWeight: 600, color: '#1c1c1e' }}>
-              {match.name}
+              {match.title}
             </Typography>
             <Typography variant="body2" sx={{ color: '#636366' }}>
-              {match.date}
+              {formatDateFromSeconds(match.timestamp)}
             </Typography>
           </Paper>
         </Grid>

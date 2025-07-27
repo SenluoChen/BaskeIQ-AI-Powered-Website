@@ -62,6 +62,8 @@ import {
   Grid, // ✅ 新增這一行
 } from '@mui/material';
 import UserSetupModal from '../components/modal/UserSetupModal';
+import { setMatched } from '../store/slices/matchSlice';
+import { useLazyGetMatchesQuery } from '../store/api/MatchApi';
 
 
 const drawerWidth = 450;
@@ -270,6 +272,7 @@ export default function Root() {
     useAppContext();
 
   const [getUser] = useGetUserMutation();
+  const [getMatches] = useLazyGetMatchesQuery();
 
   const navigationItems: any[] = [];
   
@@ -277,11 +280,17 @@ export default function Root() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const userResponse = await getUser().unwrap();
+        const [userResponse, matchesResponse] = await Promise.all([
+          getUser().unwrap(),
+          getMatches().unwrap(),
+        ]);
         if(userResponse === null) {
           setShowUserSetupModal(true);
         } else {
           dispatch(setUser(userResponse));
+        }
+        if (matchesResponse?.matches) {
+          dispatch(setMatched(matchesResponse.matches));
         }
       } catch (error: any) {
         console.error('🔴 getUser failed:', error);
@@ -298,7 +307,7 @@ export default function Root() {
     };
 
     fetchData();
-  }, [dispatch, getUser, navigate, setIsError, setIsLoading, userHasAuthenticated]);
+  }, [dispatch, getMatches, getUser, navigate, setIsError, setIsLoading, userHasAuthenticated]);
 
   const drawer = (
     <div>

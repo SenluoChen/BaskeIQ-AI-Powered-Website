@@ -1,81 +1,105 @@
-import { useEffect } from 'react';
-import { Box, Typography, IconButton, Tooltip } from '@mui/material';
+import { useEffect, useState } from 'react';
+import {
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  Alert,
+  Modal,
+  TextField,
+  Button,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import MatchList from '../components/MatchList';
-import { Outlet } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { matchSelector } from '../store/selectors/matchSelector';
-import { setMatched } from '../store/slices/matchSlice';
 import CommunityPage from './CommunityPage';
-import { Grid } from '@mui/material';
-
-
-export type MatchType = {
-  id: number;
-  name: string;
-  date: string;
-};
+import { Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setMatched } from '../store/slices/matchSlice';
+import { useGetMatchesQuery, usePostMatchMutation } from '../store/api/MatchApi';
 
 export default function DashboardPage() {
   const dispatch = useDispatch();
-  const matches = useSelector(matchSelector).matches;
+  const {
+    data,
+    error,
+    isLoading,
+    isSuccess,
+    isError,
+    refetch,
+  } = useGetMatchesQuery();
 
-  // 載入 localStorage 比賽
+  const [postMatch, { isLoading: isCreating }] = usePostMatchMutation();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [createError, setCreateError] = useState('');
+
+  // Update Redux store when data is fetched
   useEffect(() => {
-    const saved = localStorage.getItem('matches');
-    if (saved) {
-      dispatch(setMatched(JSON.parse(saved)));
+    if (isSuccess && data?.matches) {
+      dispatch(setMatched(data.matches));
     }
-  }, [dispatch]);
+  }, [isSuccess, data, dispatch]);
 
-  const matchNames = [
-    'Opening Game',
-    'Rivalry Match',
-    'Court Clash',
-    'Playoff 1',
-    'Playoff 2',
-    'Playoff 3',
-    'Championship Trial',
-  ];
+  const handleCreateMatch = async () => {
+    if (!newTitle.trim()) {
+      setCreateError('Title is required');
+      return;
+    }
 
-  const matchCount = matches.length;
-
-  const handleAddMatch = () => {
-    const name = matchNames[matchCount % matchNames.length];
-
-    const newMatch: MatchType = {
-      id: Date.now(),
-      name,
-      date: new Date().toISOString().slice(0, 10),
-    };
-
-    const updated = [...matches, newMatch];
-    dispatch(setMatched(updated));
-    localStorage.setItem('matches', JSON.stringify(updated));
+    try {
+      await postMatch({ title: newTitle }).unwrap();
+      setModalOpen(false);
+      setNewTitle('');
+      setCreateError('');
+      refetch();
+    } catch (err) {
+      setCreateError('Failed to create match');
+    }
   };
 
+  if (isLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box m={4}>
+        <Alert severity="error">
+          {typeof error === 'string' ? error : 'Failed to load matches'}
+        </Alert>
+      </Box>
+    );
+  }
+
+  const matches = data?.matches || [];
 
   return (
     <Box sx={{ backgroundColor: '#f5f5f5', minHeight: '100vh', p: 3 }}>
-      {/* 🏀 Matchs 標題區塊 */}
+      {/* 🏀 Match header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" fontWeight={700}>
-          🏀 Matchs
+          🏀 Matches
         </Typography>
-        <Tooltip title="新增比賽">
-          <IconButton color="primary" onClick={handleAddMatch}>
+        <Tooltip title="Add new match">
+          <IconButton color="primary" onClick={() => setModalOpen(true)}>
             <AddIcon />
           </IconButton>
         </Tooltip>
       </Box>
 
-      {/* 📋 比賽列表（最多顯示前 8 個） */}
+      {/* 📋 Match list */}
       <MatchList matches={matches.slice(0, 9)} />
 
-      {/* “...” Apple 風格的更多按鈕 */}
+      {/* "..." See more button */}
       {matches.length > 8 && (
         <Box
-          onClick={() => alert('將來跳轉至完整比賽頁')}
+          onClick={() => alert('Navigate to full match list')}
           sx={{
             width: 200,
             height: 70,
@@ -98,7 +122,7 @@ export default function DashboardPage() {
         </Box>
       )}
 
-      {/* 🧑‍🤝‍🧑 社群活動區塊 */}
+      {/* 🧑‍🤝‍🧑 Community */}
       <Box
         sx={{
           position: 'sticky',
@@ -106,7 +130,7 @@ export default function DashboardPage() {
           backgroundColor: '#fff',
           zIndex: 10,
           boxShadow: '0 -4px 12px rgba(94, 94, 94, 0.06)',
-          mt: 65, // 跟上面列表拉開距離
+          mt: 65,
           borderRadius: 10,
           transition: 'all 0.3s ease-in-out',
         }}
@@ -114,10 +138,55 @@ export default function DashboardPage() {
         <CommunityPage />
       </Box>
 
-      {/* 🔽 Outlet 子頁面 */}
+      {/* 🔽 Outlet */}
       <Box mt={4}>
         <Outlet />
       </Box>
+
+      {/* ➕ Create match modal */}
+      <Modal
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setNewTitle('');
+          setCreateError('');
+        }}
+      >
+        <Box
+          sx={{
+            width: 400,
+            p: 4,
+            backgroundColor: 'white',
+            borderRadius: 2,
+            boxShadow: 24,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight={600}>
+            Create a New Match
+          </Typography>
+          <TextField
+            label="Match Title"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            fullWidth
+          />
+          {createError && <Alert severity="error">{createError}</Alert>}
+          <Button
+            variant="contained"
+            onClick={handleCreateMatch}
+            disabled={isCreating}
+          >
+            {isCreating ? 'Creating...' : 'Create'}
+          </Button>
+        </Box>
+      </Modal>
     </Box>
   );
 }

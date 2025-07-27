@@ -1,42 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Shot } from '../../types/Match.type';
+import { usePutMatchMutation } from '../../store/api/MatchApi';
 
-type ShotType = {
-  x: number;
-  y: number;
-  made: boolean;
+type CourtProps = {
+  matchTimestamp: number; // timestamp of the match to update
+  shots?: Shot[];         // initial shots
+  editable?: boolean;
 };
 
-export default function Court() {
-  const [shots, setShots] = useState<ShotType[]>([]);
+export default function Court({
+  matchTimestamp,
+  shots = [],
+  editable = true,
+}: CourtProps) {
+  const [localShots, setLocalShots] = useState<Shot[]>([]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, made: boolean) => {
+  const [putMatch] = usePutMatchMutation();
+
+  useEffect(() => {
+    setLocalShots(shots);
+  }, [shots]);
+
+  const handleClick = async (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    made: boolean
+  ) => {
+    if (!editable) return;
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    setShots((prev) => [...prev, { x, y, made }]);
+    const newShot: Shot = {
+      x,
+      y,
+      type: made ? 'success' : 'failed',
+    };
+
+    const updatedShots = [...localShots, newShot];
+    setLocalShots(updatedShots);
+
+    // Immediately update the match in DB
+    try {
+      await putMatch({
+        timestamp: matchTimestamp,
+        shots: updatedShots,
+      }).unwrap();
+    } catch (err) {
+      console.error('❌ Failed to update shots:', err);
+    }
   };
 
   return (
     <div
-      onClick={(e) => handleClick(e, true)} // 左鍵：進球
+      onClick={(e) => handleClick(e, true)}
       onContextMenu={(e) => {
-        e.preventDefault(); // 防止跳出瀏覽器右鍵選單
-        handleClick(e, false); // 右鍵：未進
+        e.preventDefault();
+        handleClick(e, false);
       }}
       style={{
-        backgroundImage: 'url(/01.jpg)', // 換成你自己的球場圖
+        backgroundImage: 'url(/01.jpg)',
         backgroundSize: 'contain',
-        width: '700',                   // ✅ 自適應寬度
-        height: 350,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        aspectRatio: '16 / 9',
+        width: 700,
+        height: 350,
         position: 'relative',
+        aspectRatio: '16 / 9',
         transform: 'translateY(-20px)',
+        cursor: editable ? 'crosshair' : 'default',
       }}
     >
-      {shots.map((shot, index) => (
+      {localShots.map((shot, index) => (
         <div
           key={index}
           style={{
@@ -45,9 +80,8 @@ export default function Court() {
             left: shot.x - 5,
             width: 11,
             height: 11,
-            
             borderRadius: '50%',
-            backgroundColor: shot.made ? 'green' : 'red',
+            backgroundColor: shot.type === 'success' ? 'green' : 'red',
             border: '1px solid white',
             pointerEvents: 'none',
           }}
