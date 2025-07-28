@@ -28,6 +28,8 @@ import {
 import { formatDateFromSeconds } from '../utils/data.utils';
 import { usePutMatchMutation } from '../store/api/MatchApi';
 import { QuarterStats } from '../types/Match.type';
+import { usePostAnalyzeMatchResultMutation } from '../store/api/AnalyseApi';
+import { MatchAnalysisResult } from '../types/Analysis.type';
 
 ChartJS.register(
   BarElement,
@@ -46,16 +48,19 @@ export default function MatchDetailPage() {
   const match = useMemo(() => matches.find((m) => m.id === matchId), [matchId, matches]);
 
   const [scores, setScores] = useState([0, 0, 0, 0]);
-  const [advice, setAdvice] = useState('');
+  const [phaseModalOpen, setPhaseModalOpen] = useState(false);
+  const [phaseInput, setPhaseInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<MatchAnalysisResult | null>(null);
 
   const [putMatch] = usePutMatchMutation();
+  const [postAnalyzeMatchResult] = usePostAnalyzeMatchResultMutation();
   const [statModalOpen, setStatModalOpen] = useState(false);
 
   const [formStats, setFormStats] = useState({
-    turnovers: { q1: 0, q2: 0, q3: 0, q4: 0 },
-    assists: { q1: 0, q2: 0, q3: 0, q4: 0 },
-    rebounds: { q1: 0, q2: 0, q3: 0, q4: 0 },
+    turnovers: match?.turnovers ?? { q1: 0, q2: 0, q3: 0, q4: 0 },
+    assists: match?.assists ?? { q1: 0, q2: 0, q3: 0, q4: 0 },
+    rebounds: match?.rebounds ?? { q1: 0, q2: 0, q3: 0, q4: 0 },
   });
 
   const handleFormChange = (
@@ -153,29 +158,25 @@ export default function MatchDetailPage() {
     scales: { y: { beginAtZero: true } },
   };
 
-  const handleGenerateAdvice = async () => {
+  const handleGenerateAdvice = async (phase: string) => {
+    if (!match) return;
     setLoading(true);
-    const matchStats = `
-Match ID: ${match.id}
-Date: ${formatDateFromSeconds(match.timestamp)}
-Quarter Scores: Q1=${scores[0]}, Q2=${scores[1]}, Q3=${scores[2]}, Q4=${scores[3]}
-Total: ${totalScore} pts
-Turnovers: ${match.turnovers ? JSON.stringify(match.turnovers) : 'N/A'}
-Assists: ${match.assists ? JSON.stringify(match.assists) : 'N/A'}
-Rebounds: ${match.rebounds ? JSON.stringify(match.rebounds) : 'N/A'}
-Shots: ${match.shots?.length ?? 0} total
-    `;
 
     try {
-      const res = await fetch('/api/chatgpt/generate-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ matchStats }),
-      });
-      const data = await res.json();
-      setAdvice(data.result);
-    } catch {
-      setAdvice('⚠️ AI advice generation failed. Please try again later.');
+      const result = await postAnalyzeMatchResult({
+        timestamp: match.timestamp,
+        phase,
+        shots: match.shots?.length ?? 0,
+        turnovers: Object.values(match.turnovers || {}).reduce((a, b) => a + b, 0),
+        assists: Object.values(match.assists || {}).reduce((a, b) => a + b, 0),
+        rebounds: Object.values(match.rebounds || {}).reduce((a, b) => a + b, 0),
+        points: scores.reduce((sum, val) => sum + val, 0),
+      }).unwrap();
+
+      setAnalysisResult(result.advice.result);
+    } catch (err) {
+      console.error('❌ Error generating advice', err);
+      setAnalysisResult(null);
     } finally {
       setLoading(false);
     }
@@ -236,9 +237,9 @@ Shots: ${match.shots?.length ?? 0} total
               📈 Turnovers / Assists / Rebounds
             </Typography>
             <PlayerStatsLineChart
-              turnovers={match.turnovers}
-              assists={match.assists}
-              rebounds={match.rebounds}
+              turnovers={formStats.turnovers}
+              assists={formStats.assists}
+              rebounds={formStats.rebounds}
             />
             <Button
               variant="outlined"
@@ -256,19 +257,42 @@ Shots: ${match.shots?.length ?? 0} total
             <Typography variant="h6" fontWeight={700}>🤖 AI Post-Game Advice</Typography>
             <Button
               variant="contained"
-              onClick={handleGenerateAdvice}
+              onClick={() => setPhaseModalOpen(true)}
               disabled={loading}
               sx={{ mt: 2 }}
             >
               {loading ? 'Generating...' : 'Generate Advice'}
             </Button>
-            {advice && (
-              <Typography
-                variant="body1"
-                sx={{ whiteSpace: 'pre-line', mt: 2 }}
-              >
-                {advice}
-              </Typography>
+            {analysisResult && (
+              <Box mt={3}>
+                <Typography variant="subtitle1" fontWeight={700}>
+      ⭐ Principal Advice
+                </Typography>
+                <Typography variant="h6" gutterBottom>{analysisResult.mainAdvice.title}</Typography>
+                <Typography variant="body1">{analysisResult.mainAdvice.text}</Typography>
+                <Typography variant="body2" color="text.secondary" mt={1}>
+      💬 {analysisResult.mainAdvice.comment}
+                </Typography>
+
+                {analysisResult.secondaryAdvices.length > 0 && (
+                  <Box mt={4}>
+                    <Typography variant="subtitle1" fontWeight={700}>
+          🔍 Secondary Advices
+                    </Typography>
+                    {analysisResult.secondaryAdvices.map((advice, index) => (
+                      <Box key={index} mt={2}>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {advice.title}
+                        </Typography>
+                        <Typography>{advice.text}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+              💬 {advice.comment}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
             )}
           </Paper>
         </Grid>
@@ -319,6 +343,42 @@ Shots: ${match.shots?.length ?? 0} total
 
           <Button variant="contained" onClick={handleSubmitStats}>
       💾 Enregistrer
+          </Button>
+        </Box>
+      </Modal>
+      <Modal open={phaseModalOpen} onClose={() => setPhaseModalOpen(false)}>
+        <Box
+          sx={{
+            width: 400,
+            p: 4,
+            backgroundColor: 'white',
+            borderRadius: 2,
+            boxShadow: 24,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight={700}>📌 Nom de la phase</Typography>
+          <TextField
+            label="Ex: training, game, playoff..."
+            value={phaseInput}
+            onChange={(e) => setPhaseInput(e.target.value)}
+            fullWidth
+          />
+          <Button
+            variant="contained"
+            disabled={!phaseInput}
+            onClick={async () => {
+              setPhaseModalOpen(false);
+              await handleGenerateAdvice(phaseInput); // appel avec phase
+            }}
+          >
+      ✅ Confirmer et lancer l’analyse
           </Button>
         </Box>
       </Modal>
