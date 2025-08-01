@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
 import { userApi } from './api/UserApi';
 import { matchApi } from './api/MatchApi';
+import { analysisApi } from './api/AnalyseApi';
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -11,7 +12,8 @@ export const store = configureStore({
       serializableCheck: false,
     }).concat(
       userApi.middleware,
-      matchApi.middleware
+      matchApi.middleware,
+      analysisApi.middleware
     ),
 });
 

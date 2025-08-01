@@ -28,4 +28,5 @@ export const analysisApi = createApi({
 export const {
   usePostAnalyzeMatchResultMutation,
   useGetAnalyzesQuery,
+  useLazyGetAnalyzesQuery,
 } = analysisApi;

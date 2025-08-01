@@ -10,12 +10,12 @@ import {
 } from '@mui/material';
 import { Bar } from 'react-chartjs-2';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { matchSelector } from '../store/selectors/matchSelector';
 import { useState, useMemo, useEffect } from 'react';
 import Court from '../components/Court/Court';
 import PlayerStatsLineChart from '../components/PlayerStatsLineChart/PlayerStatsLineChart';
-
+import { skipToken } from '@reduxjs/toolkit/query';
 import {
   Chart as ChartJS,
   BarElement,
@@ -28,8 +28,9 @@ import {
 import { formatDateFromSeconds } from '../utils/data.utils';
 import { usePutMatchMutation } from '../store/api/MatchApi';
 import { QuarterStats } from '../types/Match.type';
-import { usePostAnalyzeMatchResultMutation } from '../store/api/AnalyseApi';
-import { MatchAnalysisResult } from '../types/Analysis.type';
+import { useGetAnalyzesQuery, useLazyGetAnalyzesQuery, usePostAnalyzeMatchResultMutation } from '../store/api/AnalyseApi';
+import { MatchAnalysis, MatchAnalysisResult } from '../types/Analysis.type';
+import { setAnalyzes } from '../store/slices/analysisSlice';
 
 ChartJS.register(
   BarElement,
@@ -41,10 +42,10 @@ ChartJS.register(
 );
 
 export default function MatchDetailPage() {
+  const dispatch = useDispatch();
   const { matchId } = useParams();
   const matches = useSelector(matchSelector).matches;
 
-  // Get the match corresponding to matchId
   const match = useMemo(() => matches.find((m) => m.id === matchId), [matchId, matches]);
 
   const [scores, setScores] = useState([0, 0, 0, 0]);
@@ -52,9 +53,14 @@ export default function MatchDetailPage() {
   const [phaseInput, setPhaseInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<MatchAnalysisResult | null>(null);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<MatchAnalysis | null>(null);
 
   const [putMatch] = usePutMatchMutation();
   const [postAnalyzeMatchResult] = usePostAnalyzeMatchResultMutation();
+  const { data: analyzesData } = useGetAnalyzesQuery(
+    match ? match.timestamp.toString() : skipToken
+  );
+  const [getAnalyzes] = useLazyGetAnalyzesQuery();
   const [statModalOpen, setStatModalOpen] = useState(false);
 
   const [formStats, setFormStats] = useState({
@@ -79,7 +85,7 @@ export default function MatchDetailPage() {
 
   const handleSubmitStats = async () => {
     try {
-      if(match) {
+      if (match) {
         await putMatch({
           timestamp: match.timestamp,
           turnovers: formStats.turnovers,
@@ -95,17 +101,18 @@ export default function MatchDetailPage() {
   };
 
   useEffect(() => {
+    if (analyzesData?.items) {
+      dispatch(setAnalyzes(analyzesData.items));
+    }
+  }, [analyzesData, dispatch]);
+
+  useEffect(() => {
     if (match?.points) {
       const { q1 = 0, q2 = 0, q3 = 0, q4 = 0 } = match.points;
       setScores([q1, q2, q3, q4]);
     }
   }, [match?.points]);
 
-  if (!match) {
-    return <div>Match not found.</div>;
-  }
-
-  // If no match found
   if (!match) {
     return (
       <Box p={4}>
@@ -121,7 +128,6 @@ export default function MatchDetailPage() {
     updated[index] = parseInt(value) || 0;
     setScores(updated);
 
-    // Prepare object to send to DynamoDB
     const updatedPoints = {
       q1: updated[0],
       q2: updated[1],
@@ -136,7 +142,6 @@ export default function MatchDetailPage() {
       }).unwrap();
     } catch (err) {
       console.error('❌ Failed to update quarter scores:', err);
-    // (Optionnel : affiche une erreur UI ici)
     }
   };
 
@@ -172,6 +177,10 @@ export default function MatchDetailPage() {
         rebounds: Object.values(match.rebounds || {}).reduce((a, b) => a + b, 0),
         points: scores.reduce((sum, val) => sum + val, 0),
       }).unwrap();
+
+      // Lazy query qui va dispatcher les données directement
+      const analyzesResult = await getAnalyzes(String(match.timestamp)).unwrap();
+      dispatch(setAnalyzes(analyzesResult.items)); // 👈 mise à jour Redux
 
       setAnalysisResult(result.advice.result);
     } catch (err) {
@@ -246,38 +255,82 @@ export default function MatchDetailPage() {
               sx={{ mt: 2 }}
               onClick={() => setStatModalOpen(true)}
             >
-  ➕ Ajouter données
+              ➕ Add Stats
             </Button>
           </Paper>
         </Grid>
 
         {/* AI advice section */}
         <Grid item xs={12}>
+          {analyzesData?.items && analyzesData.items.length > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                overflowX: 'auto',
+                gap: 1,
+                mb: 2,
+                p: 1,
+                '&::-webkit-scrollbar': { height: 6 },
+                '&::-webkit-scrollbar-thumb': { backgroundColor: '#ccc', borderRadius: 3 },
+              }}
+            >
+              <Button
+                variant="contained"
+                onClick={() => setPhaseModalOpen(true)}
+                disabled={loading}
+                sx={{
+                  minWidth: 180,
+                  flexShrink: 0,
+                  backgroundColor: 'purple'
+                }}
+              >
+                {loading ? 'Generating...' : 'Generate Advice'}
+              </Button>
+              {analyzesData.items.map((analysis) => {
+                const isSelected = selectedAnalysis?.phase === analysis.phase;
+                return (
+                  <Button
+                    key={analysis['user_id#timestamp']}
+                    variant={isSelected ? 'contained' : 'outlined'}
+                    sx={{
+                      minWidth: 180,
+                      flexShrink: 0,
+                      backgroundColor: isSelected ? 'black' : 'white',
+                      color: isSelected ? 'white' : 'black',
+                      borderColor: isSelected ? 'black' : '#ddd',
+                      '&:hover': { backgroundColor: isSelected ? 'black' : '#f5f5f5' },
+                    }}
+                    onClick={() => {
+                      setSelectedAnalysis(analysis);
+                      setAnalysisResult(analysis.result);
+                    }}
+                  >
+                    {analysis.phase || 'No phase'} – {formatDateFromSeconds(analysis.timestamp)}
+                  </Button>
+                );
+              })}
+            </Box>
+          )}
+
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight={700}>🤖 AI Post-Game Advice</Typography>
-            <Button
-              variant="contained"
-              onClick={() => setPhaseModalOpen(true)}
-              disabled={loading}
-              sx={{ mt: 2 }}
-            >
-              {loading ? 'Generating...' : 'Generate Advice'}
-            </Button>
             {analysisResult && (
               <Box mt={3}>
                 <Typography variant="subtitle1" fontWeight={700}>
-      ⭐ Principal Advice
+                  ⭐ Main Advice
                 </Typography>
-                <Typography variant="h6" gutterBottom>{analysisResult.mainAdvice.title}</Typography>
+                <Typography variant="h6" gutterBottom>
+                  {analysisResult.mainAdvice.title}
+                </Typography>
                 <Typography variant="body1">{analysisResult.mainAdvice.text}</Typography>
                 <Typography variant="body2" color="text.secondary" mt={1}>
-      💬 {analysisResult.mainAdvice.comment}
+                  💬 {analysisResult.mainAdvice.comment}
                 </Typography>
 
                 {analysisResult.secondaryAdvices.length > 0 && (
                   <Box mt={4}>
                     <Typography variant="subtitle1" fontWeight={700}>
-          🔍 Secondary Advices
+                      🔍 Secondary Advices
                     </Typography>
                     {analysisResult.secondaryAdvices.map((advice, index) => (
                       <Box key={index} mt={2}>
@@ -286,7 +339,7 @@ export default function MatchDetailPage() {
                         </Typography>
                         <Typography>{advice.text}</Typography>
                         <Typography variant="body2" color="text.secondary">
-              💬 {advice.comment}
+                          💬 {advice.comment}
                         </Typography>
                       </Box>
                     ))}
@@ -297,6 +350,8 @@ export default function MatchDetailPage() {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Stats modal */}
       <Modal open={statModalOpen} onClose={() => setStatModalOpen(false)}>
         <Box
           sx={{
@@ -314,7 +369,7 @@ export default function MatchDetailPage() {
             gap: 2,
           }}
         >
-          <Typography variant="h6" fontWeight={700}>📊 Modifier les stats</Typography>
+          <Typography variant="h6" fontWeight={700}>📊 Edit Stats</Typography>
 
           {['turnovers', 'assists', 'rebounds'].map((type) => (
             <Box key={type}>
@@ -329,9 +384,9 @@ export default function MatchDetailPage() {
                       value={formStats[type as keyof typeof formStats][q as keyof QuarterStats]}
                       onChange={(e) =>
                         handleFormChange(
-                    type as 'turnovers' | 'assists' | 'rebounds',
-                    q as 'q1' | 'q2' | 'q3' | 'q4',
-                    parseInt(e.target.value) || 0
+                          type as 'turnovers' | 'assists' | 'rebounds',
+                          q as 'q1' | 'q2' | 'q3' | 'q4',
+                          parseInt(e.target.value) || 0
                         )
                       }
                     />
@@ -342,10 +397,12 @@ export default function MatchDetailPage() {
           ))}
 
           <Button variant="contained" onClick={handleSubmitStats}>
-      💾 Enregistrer
+            💾 Save
           </Button>
         </Box>
       </Modal>
+
+      {/* Phase modal */}
       <Modal open={phaseModalOpen} onClose={() => setPhaseModalOpen(false)}>
         <Box
           sx={{
@@ -363,7 +420,7 @@ export default function MatchDetailPage() {
             gap: 2,
           }}
         >
-          <Typography variant="h6" fontWeight={700}>📌 Nom de la phase</Typography>
+          <Typography variant="h6" fontWeight={700}>📌 Phase Name</Typography>
           <TextField
             label="Ex: training, game, playoff..."
             value={phaseInput}
@@ -372,14 +429,23 @@ export default function MatchDetailPage() {
           />
           <Button
             variant="contained"
-            disabled={!phaseInput}
+            disabled={
+              !phaseInput ||
+              analyzesData?.items?.some((a) => a.phase.toLowerCase() === phaseInput.toLowerCase())
+            }
             onClick={async () => {
               setPhaseModalOpen(false);
-              await handleGenerateAdvice(phaseInput); // appel avec phase
+              await handleGenerateAdvice(phaseInput);
             }}
           >
-      ✅ Confirmer et lancer l’analyse
+            ✅ Confirm & Generate
           </Button>
+          {phaseInput &&
+            analyzesData?.items?.some((a) => a.phase.toLowerCase() === phaseInput.toLowerCase()) && (
+            <Typography variant="body2" color="error">
+              ⚠️ This phase name already exists. Please choose another.
+            </Typography>
+          )}
         </Box>
       </Modal>
     </Box>
