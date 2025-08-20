@@ -23,11 +23,11 @@ src/
 
 ## Main Features
 
-- 🏀 AI-powered personalized game analysis / tracker
-- 👥 Community social posts
-- 💬 Real-time chat 
-- 🔔 Notification center
-- 👤 User profile and settings
+- AI-powered personalized game analysis / tracker
+- Community social posts
+- Real-time chat 
+- Notification center
+- User profile and settings
 - Multi-language support (EN/CH)
 
 
