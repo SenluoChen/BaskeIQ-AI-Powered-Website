@@ -12,7 +12,7 @@ export const matches = [
   },
   {
     id: 'match3',
-    name: '🏐 排球比賽 C',
+    name: ' 排球比賽 C',
     date: '2025-06-10',
   },
 ];

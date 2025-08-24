@@ -20,6 +20,12 @@ import {
 import { useAppContext } from '../components/authentication/account';
 import { useState } from 'react';
 import { Checkbox, FormControlLabel, FormHelperText } from '@mui/material';
+import { Paper } from '@mui/material';
+
+
+
+
+
 
 const validatePassword = (password: string): string | undefined => {
   const hasNumber = /\d/.test(password);
@@ -348,332 +354,508 @@ export default function WelcomePage() {
   };
 
   return (
-    <Box sx={{ flex: 1,  minHeight: '100vh', bgcolor: '#f4f6f8', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', position: 'relative' }}>
-      {pageType === 'signIn' && (
-        <Box sx={{maxWidth: 500}}>
-          <Box sx={{maxWidth: 400}}>
-            <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ mt: 8 }}>
-              {t('page.welcomePage.signIn.title')}
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {t('page.welcomePage.signIn.subTitle')}
-            </Typography>
-
-            <Box
-              sx={{display: 'flex', flexDirection: 'column'}}
-              component="form"
-              onSubmit={handleSubmitSignIn}
-              noValidate>
-
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="mail"
-                label={t('page.welcomePage.signIn.form.mail')}
-                name="mail"
-                autoComplete="mail"
-                autoFocus
-                error={mailError !== ''}
-                helperText={mailError}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label={t('page.welcomePage.signIn.form.password')}
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={passwordError !== ''}
-                helperText={passwordError}
-              />
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Link onClick={() => setPageType('forgotPassword')} underline="hover">
-                  {t('page.welcomePage.signIn.forgotPassword')}
-                </Link>
-              </Box>
-
-              <Button disabled={isLoadingSignIn} variant="contained" type='submit' fullWidth sx={{ mb: 2, width: '60%', alignSelf: 'center' }}>
-                {t('page.welcomePage.signInLabel')}
-              </Button>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" sx={{alignSelf: 'center' }}>
-            {t('page.welcomePage.signIn.alreadyAccount')}{' '}
-            <Link onClick={() => setPageType('signUp')} underline="hover">
-              {t('page.welcomePage.signIn.signUpFree')}
-            </Link>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        bgcolor: '#0B0F19',
+        background:
+        'radial-gradient(1200px 600px at 50% -100px, rgba(255,202,40,0.08), rgba(0,0,0,0))',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 3,
+      }}
+    >
+      {/* Shared: Dark Glass Card Style */}
+      <Paper
+        elevation={0}
+        sx={{
+          width: '100%',
+          maxWidth: pageType === 'signUp' ? 820 : 520,
+          p: { xs: 3, md: 4 },
+          borderRadius: 10,
+          background:
+          'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.22))',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 18px 38px rgba(0,0,0,.35)',
+          color: '#E6EDF3',
+        }}
+      >
+        {/* Title Area */}
+        <Box sx={{ mb: 2 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              letterSpacing: 0.5,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              background:
+              'linear-gradient(90deg, #ff8f00, #ffca28, #ff8f00)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 12px rgba(255,165,0,0.4)',
+            }}
+          >
+            {pageType === 'signIn' && 'Sign In'}
+            {pageType === 'signUp' && 'Create Account'}
+            {pageType === 'forgotPassword' && 'Forgot Password'}
+            {pageType === 'confirmSignUp' && 'Confirm Your Account'}
+            {pageType === 'confirmSignIn' && 'Set a New Password'}
           </Typography>
         </Box>
-      )}
-      {pageType === 'forgotPassword' && (
-        <Box sx={{maxWidth: 500}}>
-          {codeSent ? (
-            <>
-              <Typography component="h1" variant="h5">
-                {t('page.welcomePage.forgotPassword.title2')}
+
+        {/* Unified Dark Input Style */}
+        <Box
+          sx={{
+            '& .MuiTextField-root': { my: 1 },
+            '& .MuiInputLabel-root': { color: 'rgba(230,237,243,0.7)' },
+            '& .MuiOutlinedInput-root': {
+              color: '#E6EDF3',
+              background: 'rgba(255,255,255,0.03)',
+              borderRadius: 2,
+              '& fieldset': { borderColor: 'rgba(255,255,255,0.18)' },
+              '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.28)' },
+              '&.Mui-focused fieldset': { borderColor: '#FFCA28' },
+            },
+            '& .MuiFormHelperText-root': { color: '#FFB74D' },
+            '& a': {
+              color: '#FFCA28',
+              cursor: 'pointer',
+              '&:hover': { textDecoration: 'underline' },
+            },
+            '& .MuiButton-contained': {
+              backgroundColor: '#FFCA28',
+              color: '#0B0F19',
+              fontWeight: 800,
+              borderRadius: 10,
+              boxShadow: '0 8px 20px rgba(255,202,40,.25)',
+              '&:hover': {
+                backgroundColor: '#ffb300',
+                boxShadow: '0 10px 24px rgba(255,202,40,.35)',
+              },
+            },
+            '& .MuiButton-outlined': {
+              borderColor: 'rgba(255,255,255,0.24)',
+              color: '#E6EDF3',
+              borderRadius: 10,
+              '&:hover': {
+                borderColor: '#FFCA28',
+                background: 'rgba(255,202,40,0.08)',
+              },
+            },
+          }}
+        >
+          {/* ---------- Each Page Content ---------- */}
+          {pageType === 'signIn' && (
+            <Box sx={{ maxWidth: 480 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 2, color: 'rgba(230,237,243,0.75)' }}
+              >
+              Sign in to continue.
               </Typography>
-              <Typography variant="body2">
-                {t('page.welcomePage.forgotPassword.description2')}
-              </Typography>
-              <Box
-                component="form"
-                onSubmit={handleSubmitConfirmPassword}
-                noValidate
-                sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
+
+              <Box component="form" onSubmit={handleSubmitSignIn} noValidate>
                 <TextField
-                  margin="normal"
                   required
                   fullWidth
-                  id="code"
-                  label={t('page.welcomePage.forgotPassword.form.code')}
-                  name="code"
-                  type="code"
-                  autoComplete="code"
+                  id="mail"
+                  name="mail"
+                  label="Email"
+                  autoComplete="email"
                   autoFocus
-                  error={codeError !== ''}
-                  helperText={codeError}
+                  error={mailError !== ''}
+                  helperText={mailError}
                 />
                 <TextField
-                  margin="normal"
                   required
                   fullWidth
                   id="password"
-                  label={t('page.welcomePage.forgotPassword.form.password')}
                   name="password"
+                  label="Password"
                   type="password"
-                  autoComplete="password"
-                  autoFocus
+                  autoComplete="current-password"
+                  error={passwordError !== ''}
+                  helperText={passwordError}
+                />
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    my: 1,
+                  }}
+                >
+                  <Link
+                    onClick={() => setPageType('forgotPassword')}
+                    underline="hover"
+                  >
+                  Forgot your password?
+                  </Link>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Button
+                    disabled={isLoadingSignIn}
+                    variant="contained"
+                    type="submit"
+                    fullWidth
+                    sx={{
+                      mt: 1.5,
+                      width: { xs: '100%', sm: '60%' },
+                      mx: 'auto',
+                      fontWeight: 900,
+                    }}
+                  >
+                  Log In
+                  </Button>
+                </Box>
+              </Box>
+
+              <Typography
+                variant="body2"
+                sx={{ mt: 2, color: 'rgba(230,237,243,0.75)' }}
+              >
+              Don’t have an account?{' '}
+                <Link onClick={() => setPageType('signUp')} underline="hover">
+                Create one for free
+                </Link>
+              </Typography>
+            </Box>
+          )}
+
+          {pageType === 'forgotPassword' && (
+            <Box sx={{ maxWidth: 520 }}>
+              {codeSent ? (
+                <>
+                  <Typography
+                    variant="body2"
+                    sx={{ mb: 1.5, color: 'rgba(230,237,243,0.75)' }}
+                  >
+                  Enter the verification code and your new password.
+                  </Typography>
+                  <Box
+                    component="form"
+                    onSubmit={handleSubmitConfirmPassword}
+                    noValidate
+                  >
+                    <TextField
+                      required
+                      fullWidth
+                      id="code"
+                      name="code"
+                      label="Code"
+                      error={codeError !== ''}
+                      helperText={codeError}
+                    />
+                    <TextField
+                      required
+                      fullWidth
+                      id="password"
+                      name="password"
+                      label="New Password"
+                      type="password"
+                      error={passwordError !== ''}
+                      helperText={passwordError}
+                    />
+                    <TextField
+                      required
+                      fullWidth
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      label="Confirm Password"
+                      type="password"
+                      error={confirmPasswordError !== ''}
+                      helperText={confirmPasswordError}
+                    />
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={isLoadingConfirmPassword}
+                      sx={{
+                        mt: 2,
+                        mb: 1,
+                        width: { xs: '100%', sm: '60%' },
+                        alignSelf: 'center',
+                      }}
+                    >
+                    Change Password
+                    </Button>
+                    <Button
+                      onClick={() => setPageType('signIn')}
+                      variant="outlined"
+                      sx={{
+                        width: { xs: '100%', sm: '40%' },
+                        alignSelf: 'center',
+                      }}
+                    >
+                    Back
+                    </Button>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Typography
+                    variant="body2"
+                    sx={{ mb: 1.5, color: 'rgba(230,237,243,0.75)' }}
+                  >
+                  We’ll send you a verification code by email.
+                  </Typography>
+                  <Box
+                    component="form"
+                    onSubmit={handleSubmitForgotPassword}
+                    noValidate
+                  >
+                    <TextField
+                      required
+                      fullWidth
+                      id="mail"
+                      name="mail"
+                      type="email"
+                      label="Email"
+                      error={mailError !== ''}
+                      helperText={mailError}
+                    />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        mb: 1,
+                        width: { xs: '100%', sm: '60%' },
+                        alignSelf: 'center',
+                      }}
+                    >
+                    Send Code
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setPageType('signIn');
+                        setCodeSent(false);
+                      }}
+                      variant="outlined"
+                      sx={{
+                        width: { xs: '100%', sm: '60%' },
+                        alignSelf: 'center',
+                      }}
+                    >
+                    Back
+                    </Button>
+                  </Box>
+                </>
+              )}
+            </Box>
+          )}
+
+          {pageType === 'signUp' && (
+            <Box sx={{ maxWidth: 820 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 2, color: 'rgba(230,237,243,0.75)' }}
+              >
+              Join the BasketIQ community.
+              </Typography>
+
+              <Box
+                component="form"
+                onSubmit={handleSubmitSignUp}
+                noValidate
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <Grid container spacing={2} maxWidth={500}>
+                  {['email', 'password', 'confirmPassword'].map((field) => (
+                    <Grid item xs={12} key={field}>
+                      <TextField
+                        required
+                        fullWidth
+                        name={field}
+                        label={
+                          field === 'email'
+                            ? 'Email'
+                            : field === 'password'
+                              ? 'Password'
+                              : 'Confirm Password'
+                        }
+                        type={field.includes('password') ? 'password' : 'email'}
+                        value={formValues[field as keyof typeof formValues]}
+                        onChange={handleChange}
+                        error={!!formErrors[field]}
+                        helperText={formErrors[field]}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+
+                <FormControlLabel
+                  sx={{ mt: 1 }}
+                  control={
+                    <Checkbox
+                      name="termsAccepted"
+                      checked={formValues.termsAccepted}
+                      onChange={handleChange}
+                      sx={{
+                        color: 'rgba(255,255,255,0.5)',
+                        '&.Mui-checked': { color: '#FFCA28' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      variant="body2"
+                      sx={{ color: 'rgba(230,237,243,0.8)' }}
+                    >
+                    I agree to the Terms of Service.
+                    </Typography>
+                  }
+                />
+                {formErrors.termsAccepted && (
+                  <Typography variant="body2" color="#FFB74D">
+                    {formErrors.termsAccepted}
+                  </Typography>
+                )}
+
+                <Button
+                  disabled={isLoadingSignUp}
+                  variant="contained"
+                  type="submit"
+                  sx={{
+                    mt: 2,
+                    mb: 1,
+                    width: { xs: '100%', sm: '50%' },
+                    alignSelf: 'center',
+                  }}
+                >
+                Create Account
+                </Button>
+                <Typography
+                  variant="body2"
+                  sx={{ color: 'rgba(230,237,243,0.75)' }}
+                >
+                Already have an account?{' '}
+                  <Link onClick={() => setPageType('signIn')} underline="hover">
+                  Sign In
+                  </Link>
+                </Typography>
+              </Box>
+            </Box>
+          )}
+
+          {pageType === 'confirmSignUp' && (
+            <Box sx={{ maxWidth: 520 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1.5, color: 'rgba(230,237,243,0.75)' }}
+              >
+              Enter the 6-digit code sent to your email.
+              </Typography>
+              <Box component="form" onSubmit={handleSubmitConfirmSignUp} noValidate>
+                <TextField
+                  required
+                  fullWidth
+                  id="code"
+                  name="code"
+                  label="Code"
+                  error={errorConfirmSignUp !== ''}
+                  helperText={errorConfirmSignUp}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isLoadingConfirmSignUp}
+                  sx={{
+                    mt: 2,
+                    mb: 1,
+                    width: { xs: '100%', sm: '50%' },
+                    alignSelf: 'center',
+                  }}
+                >
+                Confirm
+                </Button>
+                <Button
+                  onClick={handleResendCode}
+                  variant="outlined"
+                  disabled={isLoadingResendCode}
+                  sx={{
+                    width: { xs: '100%', sm: '40%' },
+                    alignSelf: 'center',
+                  }}
+                >
+                Resend Code
+                </Button>
+                {errorResendCode && (
+                  <Typography variant="body2" color="#FFB74D" sx={{ mt: 1 }}>
+                    {errorResendCode}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          )}
+
+          {pageType === 'confirmSignIn' && (
+            <Box sx={{ maxWidth: 520 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1.5, color: 'rgba(230,237,243,0.75)' }}
+              >
+              Set your new password.
+              </Typography>
+              <Box component="form" onSubmit={handleSubmitConfirmSignIn} noValidate>
+                <TextField
+                  required
+                  fullWidth
+                  id="password"
+                  name="password"
+                  label="New Password"
+                  type="password"
                   error={passwordError !== ''}
                   helperText={passwordError}
                 />
                 <TextField
-                  margin="normal"
                   required
                   fullWidth
                   id="confirmPassword"
-                  label={t('page.welcomePage.forgotPassword.form.confirmPassword')}
                   name="confirmPassword"
+                  label="Confirm Password"
                   type="password"
-                  autoComplete="confirmPassword"
-                  autoFocus
                   error={confirmPasswordError !== ''}
                   helperText={confirmPasswordError}
                 />
                 <Button
                   type="submit"
                   variant="contained"
-                  disabled={isLoadingConfirmPassword}
-                  sx={{ mt: 3, mb: 2, width: '60%', alignSelf: 'center'}}>
-                  {t('page.welcomePage.forgotPassword.changePassword')}
-                </Button>
-                <Button
-                  onClick={() => setPageType('signIn')}
-                  disabled={isLoadingConfirmPassword}
-                  variant="outlined"
-                  sx={{ mt: 3, mb: 2, width: '40%', alignSelf: 'center'}}>
-                  {t('page.welcomePage.forgotPassword.back')}
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <>
-              <Typography component="h1" variant="h5">
-                {t('page.welcomePage.forgotPassword.title1')}
-              </Typography>
-              <Typography variant="body2">
-                {t('page.welcomePage.forgotPassword.description1')}
-              </Typography>
-              <Box
-                component="form"
-                onSubmit={handleSubmitForgotPassword}
-                noValidate
-                sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="mail"
-                  label={t('page.welcomePage.forgotPassword.form.mail')}
-                  name="mail"
-                  type="mail"
-                  autoComplete="mail"
-                  autoFocus
-                  error={mailError !== ''}
-                  helperText={mailError}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2, width: '60%', alignSelf: 'center' }}>
-                  {t('page.welcomePage.forgotPassword.sendCode')}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setPageType('signIn');
-                    setCodeSent(false);
+                  disabled={isLoadingConfirmSignIn}
+                  sx={{
+                    mt: 2,
+                    width: { xs: '100%', sm: '60%' },
+                    alignSelf: 'center',
                   }}
-                  variant="outlined"
-                  sx={{ mt: 3, mb: 2, width: '60%', alignSelf: 'center' }}>
-                  {t('page.welcomePage.forgotPassword.back')}
+                >
+                Change Password
                 </Button>
+                {errorConfirmSignIn && (
+                  <Typography variant="body2" color="#FFB74D" sx={{ mt: 1 }}>
+                    {errorConfirmSignIn}
+                  </Typography>
+                )}
               </Box>
-            </>
+            </Box>
           )}
         </Box>
-      )}
-      {pageType === 'signUp' && (
-        <Box sx={{maxWidth: 800}}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ mt: 8 }}>
-                Créer un compte
-          </Typography>
-          <Box sx={{display: 'flex', flexDirection: 'column',alignItems: 'center', justifyContent: 'center'}} component="form" onSubmit={handleSubmitSignUp} noValidate>
-            <Grid container spacing={2} maxWidth={400}>
-              {['email', 'password', 'confirmPassword'].map((field, index) => (
-                <Grid item xs={12} key={index}>
-                  <TextField
-                    required
-                    fullWidth
-                    name={field}
-                    label={t('page.welcomePage.signUp.form.'+field)}
-                    type={field.toLowerCase().includes('password') ? 'password' : 'text'}
-                    value={formValues[field as keyof typeof formValues]}
-                    onChange={handleChange}
-                    error={!!formErrors[field]}
-                    helperText={formErrors[field]}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-            <FormControlLabel
-              sx={{alignSelf: 'center'}}
-              control={
-                <Checkbox
-                  name="termsAccepted"
-                  checked={formValues.termsAccepted}
-                  onChange={handleChange}
-                />
-              }
-              label="J'accepte les conditions d'utilisation."
-            />
-            {formErrors.termsAccepted && (
-              <Typography sx={{alignSelf: 'center'}} variant="body2" color="error">
-                {formErrors.termsAccepted}
-              </Typography>
-            )}
-            <Button disabled={isLoadingSignUp} variant="contained" type="submit" sx={{ mt: 3, mb: 2, width: '40%', alignSelf: 'center' }}>
-              {t('page.welcomePage.signUpLabel')}
-            </Button>
-          </Box><Typography variant="body2" align="center">
-            {t('page.welcomePage.signUp.alreadyAccount')}{' '}
-            <Link onClick={() => setPageType('signIn')} underline="hover">
-              {t('page.welcomePage.signInLabel')}
-            </Link>
-          </Typography>
-        </Box>
-      )}
-      {pageType === 'confirmSignUp' && (
-        <Box sx={{maxWidth: 500}}>
-          <Typography component="h1" variant="h5">
-            {t('page.welcomePage.confirmSignUp.title')}
-          </Typography>
-          <Typography variant="body2">
-            {t('page.welcomePage.confirmSignUp.description')}
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmitConfirmSignUp}
-            noValidate
-            sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="code"
-              label={t('page.welcomePage.confirmSignUp.form.code')}
-              name="code"
-              type="code"
-              autoComplete="code"
-              autoFocus
-              error={errorConfirmSignUp !== ''}
-              helperText={errorConfirmSignUp}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isLoadingConfirmSignUp}
-              sx={{ mt: 3, mb: 2, width: '50%', alignSelf: 'center'}}>
-              {t('page.welcomePage.confirmSignUp.confirm')}
-            </Button>
-            <Button
-              onClick={() => handleResendCode()}
-              variant="outlined"
-              disabled={isLoadingResendCode}
-              sx={{ mt: 3, mb: 2, width: '40%', alignSelf: 'center'}}>
-              {t('page.welcomePage.confirmSignUp.resendCode')}
-            </Button>
-            {errorResendCode && (
-              <Typography sx={{alignSelf: 'center'}} variant="body2" color="error">
-                {errorResendCode}
-              </Typography>
-            )}
-          </Box>
-        </Box>
-      )}
-      {pageType === 'confirmSignIn' && (
-        <Box sx={{maxWidth: 500}}>
-          <Typography component="h1" variant="h5">
-            {t('page.welcomePage.confirmSignIn.title')}
-          </Typography>
-          <Typography variant="body2">
-            {t('page.welcomePage.confirmSignIn.description')}
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmitConfirmSignIn}
-            noValidate
-            sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="password"
-              label={t('page.welcomePage.confirmSignIn.form.password')}
-              name="password"
-              type="password"
-              autoComplete="password"
-              autoFocus
-              error={passwordError !== ''}
-              helperText={passwordError}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="confirmPassword"
-              label={t('page.welcomePage.confirmSignIn.form.confirmPassword')}
-              name="confirmPassword"
-              type="password"
-              autoComplete="confirmPassword"
-              autoFocus
-              error={confirmPasswordError !== ''}
-              helperText={confirmPasswordError}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isLoadingConfirmSignIn}
-              sx={{ mt: 3, mb: 2, width: '60%', alignSelf: 'center'}}>
-              {t('page.welcomePage.confirmSignIn.changePassword')}
-            </Button>
-            {errorConfirmSignIn && <FormHelperText>{errorConfirmSignIn}</FormHelperText>}
-          </Box>
-        </Box>
-      )}
+      </Paper>
     </Box>
   );
-};
+
+}

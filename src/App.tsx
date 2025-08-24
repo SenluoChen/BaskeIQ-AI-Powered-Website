@@ -50,6 +50,7 @@ const authConfig: ResourcesConfig['Auth'] = {
 Amplify.configure({ Auth: authConfig });
 cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
+
 const theme = createTheme({
   typography: {
     fontFamily: 'Muli, Arial, sans-serif',
@@ -66,11 +67,19 @@ const theme = createTheme({
     button: { fontFamily: 'Muli-Bold' },
   },
   palette: {
+   
     primary: {
-      main: Colors.primary,
+      main: "#0B0F19",
       contrastText: '#FFFFFF',
     },
-
+    text: {
+      primary: '#FFFFFF',   // 全域主要文字白色
+      secondary: '#CCCCCC', // 次要文字淡灰
+    },
+    background: {
+      default: '#0B0F19',   // 全域背景 → 深色
+      paper: '#121212',     // 卡片底色（可以透明也行）
+    },
     
   },
   components: {
@@ -114,7 +123,7 @@ const theme = createTheme({
         root: {
           fontFamily: 'Muli-Bold',
           color: Colors.white,
-          backgroundColor: Colors.primary,
+          backgroundColor: 'transparent',
           '&:hover': {
             backgroundColor: Colors.darkGrey,
           },

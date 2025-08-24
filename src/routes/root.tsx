@@ -1,11 +1,6 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState, useCallback  } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -15,21 +10,17 @@ import {
   Notifications as NotificationsIcon,
 } from '@mui/icons-material';
 import CycloneIcon from '@mui/icons-material/Cyclone';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '../components/authentication/account';
 import { AppDispatch } from '../store/store';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import MuiDrawer from '@mui/material/Drawer';
 import {
   Avatar,
   Badge,
   BottomNavigation,
   BottomNavigationAction,
-  CSSObject,
   Divider,
   IconButton,
   Menu,
@@ -44,123 +35,68 @@ import {
 import HandleLoadingError from '../components/handle-loading-error/HandleLoadingError';
 import { Colors } from '../styles/Colors';
 import { userSelector } from '../store/selectors/userSelector';
-import {
-  setUser,
-} from '../store/slices/userSlice';
-import {
-  useGetUserMutation,
-} from '../store/api/UserApi';
+import { setUser } from '../store/slices/userSlice';
+import { useGetUserMutation } from '../store/api/UserApi';
 import { logoutAll } from '../store/actions';
 import { signOut } from 'aws-amplify/auth';
 import { NotificationItem } from '../types/Notification.type';
 import ChatIcon from '@mui/icons-material/Chat';
 import ChatPreviewDrawer from '../components/chat/ChatPreviewDrawer';
-
-import { DrawerProps as MuiDrawerProps } from '@mui/material/Drawer';
-import {
-  
-  Grid, // ✅ 新增這一行
-} from '@mui/material';
 import UserSetupModal from '../components/modal/UserSetupModal';
 import { setMatched } from '../store/slices/matchSlice';
 import { useLazyGetMatchesQuery } from '../store/api/MatchApi';
+import LeftSportsDrawer from '../components/LeftSportsDrawer';
+import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
+import Footer from '../components/footer'
+import { Portal } from '@mui/material';
 
 
-const drawerWidth = 450;
 
+
+const drawerWidth = 320;
+
+
+
+/* ---------------- Mobile main ---------------- */
 const MobileMain = styled('main')(({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
   paddingTop: '56px',
-  paddingBottom: '56px', // Pour laisser la place à la barre
+  paddingBottom: '56px',
   backgroundColor: Colors.background,
   position: 'relative',
-  zIndex: 1, // 👈 Assure-toi qu'il est bien derrière la bottom bar
+  zIndex: 1,
 }));
 
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
+/* ---------------- Drawer header spacer ---------------- */
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
-interface AppBarProps extends MuiAppBarProps {
+/* ---------------- App bar ---------------- */
+interface CustomAppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: 'linear-gradient(145deg, #F15A24, #A14424);!important',
+})<CustomAppBarProps>(({ theme }) => ({
+  background: 'linear-gradient(145deg, #0B0F19 0%, #111827 100%)',
+  borderBottom: '1px solid rgba(255,255,255,0.08)', // 底部分隔線
+  color: '#fff',
+  boxShadow: '0 4px 20px rgba(0,0,0,0.6)', // 比較有科技感的陰影
+
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-      },
-    },
-  ],
 }));
 
-const ComputerDrawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<MuiDrawerProps & { open?: boolean }>(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: 'nowrap',
-  boxSizing: 'border-box',
-  ...(open
-    ? {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': {
-        ...openedMixin(theme),
-        backgroundColor: '#f5f5f5',
-      },
-    }
-    : {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': {
-        ...closedMixin(theme),
-        backgroundColor: '#f5f5f5',
-      },
-    }),
-}));
-
-
+/* ---------------- Chat type ---------------- */
 interface ChatMessage {
   id: number;
   sender: string;
@@ -169,72 +105,31 @@ interface ChatMessage {
   avatarUrl?: string;
 }
 
-
 export default function Root() {
-  const user = useSelector(userSelector)
+  const user = useSelector(userSelector);
   const theme = useTheme();
   const [value, setValue] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [open, setOpen] = useState(false);
-  const [isChatPreviewOpen, setIsChatPreviewOpen] = useState(false);
+
   const [showUserSetupModal, setShowUserSetupModal] = useState(false);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      sender: 'Le goat',
-      content: 'Ball out tonight?',
-      unread: true,
-      avatarUrl: '/lebron.avif',
-    },
-    {
-      id: 2,
-      sender: 'Wemby',
-      content: 'Let’s catch up tomorrow.',
-      unread: false,
-      avatarUrl: '/Victor-Wembanyama-Portrait.webp',
-    },
-    {
-      id: 3,
-      sender: 'Steph',
-      content: 'Gonna hit 20 threes on you',
-      unread: false,
-      avatarUrl: '/i.png',
-    },
+  const [chatMessages] = useState<ChatMessage[]>([
+    { id: 1, sender: 'The GOAT', content: 'Ball out tonight?', unread: true, avatarUrl: '/lebron.avif' },
+    { id: 2, sender: 'Wemby', content: 'Let’s catch up tomorrow.', unread: false, avatarUrl: '/Victor-Wembanyama-Portrait.webp' },
+    { id: 3, sender: 'Steph', content: 'Gonna hit 20 threes on you', unread: false, avatarUrl: '/i.png' },
   ]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null);
+
   const [notifications, setNotifications] = useState<NotificationItem[]>([
-    {
-      id: 1,
-      title: "Mise à jour",
-      description: "Nouvelle mise à jour disponible. Cliquez pour voir les détails.",
-      route: "/update",
-      read: false
-    },
-    {
-      id: 3,
-      title: "Message Admin",
-      description: "Vous avez reçu un nouveau message de l'administrateur.",
-      route: "/messages",
-      read: false
-    }
+    { id: 1, title: 'Update', description: 'New update available. Click to view details.', route: '/update', read: false },
+    { id: 3, title: 'Admin Message', description: "You have received a new message from the administrator.", route: '/messages', read: false },
   ]);
 
-  const handleProfileMenuOpen = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleNotificationsOpen = (event: MouseEvent<HTMLButtonElement>) => {
-    setNotificationAnchorEl(event.currentTarget);
-  };
-
-  const handleNotificationsClose = () => {
-    setNotificationAnchorEl(null);
-  };
+  const handleProfileMenuOpen = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const handleNotificationsOpen = (event: MouseEvent<HTMLButtonElement>) => setNotificationAnchorEl(event.currentTarget);
+  const handleNotificationsClose = () => setNotificationAnchorEl(null);
 
   const handleNotificationClick = (notification: NotificationItem) => {
     navigate(notification.route);
@@ -243,48 +138,31 @@ export default function Root() {
 
   const handleDeleteNotification = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications((prev) =>
-      prev.map((notif) => ({ ...notif, read: true }))
-    );
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  const handleLogout = async () => {
-    userHasAuthenticated(false);
-    dispatch(logoutAll());
-    await signOut();
-  };
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { userHasAuthenticated, setIsLoading, setIsError, isError, isLoading } =
-    useAppContext();
-
+  const navigate = useNavigate();
+  const { userHasAuthenticated, setIsLoading, setIsError, isError, isLoading } = useAppContext();
   const [getUser] = useGetUserMutation();
   const [getMatches] = useLazyGetMatchesQuery();
+  const [leftOpen, setLeftOpen] = useState(false);
+  const [isChatPreviewOpen, setIsChatPreviewOpen] = useState(false);
+  const toggleChatPreview = useCallback(() => {
+    setIsChatPreviewOpen(prev => !prev);
+  }, []);
 
-  const navigationItems: any[] = [];
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [userResponse, matchesResponse] = await Promise.all([
-          getUser().unwrap(),
-          getMatches().unwrap(),
-        ]);
-        if(userResponse === null) {
+        const [userResponse, matchesResponse] = await Promise.all([getUser().unwrap(), getMatches().unwrap()]);
+        if (userResponse === null) {
           setShowUserSetupModal(true);
         } else {
           dispatch(setUser(userResponse));
@@ -293,8 +171,6 @@ export default function Root() {
           dispatch(setMatched(matchesResponse.matches));
         }
       } catch (error: any) {
-        console.error('🔴 getUser failed:', error);
-
         if (error?.status === 401 || error?.data?.message === 'Unauthorized') {
           userHasAuthenticated(false);
           navigate('/');
@@ -305,94 +181,95 @@ export default function Root() {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, [dispatch, getMatches, getUser, navigate, setIsError, setIsLoading, userHasAuthenticated]);
 
-  const drawer = (
-    <div>
-      <List>
-        {navigationItems.map((item) => (
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton disabled={item.disable} onClick={item.function}>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
+  const navigationItems: any[] = [];
+
+  const handleLogout = async () => {
+    userHasAuthenticated(false);
+    dispatch(logoutAll());
+    await signOut();
+  };
+
+  const upcomingMatches = [
+    { date: '6/15', day: 'Tuesday', place: 'Villejuif Court', interest: 8 },
+    { date: '6/18', day: 'Friday', place: 'Ivry Gymnasium', interest: 5 },
+    { date: '6/20', day: 'Sunday', place: 'Sports Palace', interest: 12 },
+    { date: '6/22', day: 'Wednesday', place: 'Paris 13th District', interest: 7 },
+  ];
 
 
   return (
-  
-    <Box sx={{ display: 'flex'}}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          {
-            !isMobile && (
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                sx={[
-                  {
-                    marginRight: 5,
-                  },
-                  open && { display: 'none' },
-                ]}
-              >            
-                <MenuIcon />
-              </IconButton>
-            )
-          }
+      <AppBar position="fixed" open={!isMobile && leftOpen}>
 
-          {/* Logo et Titre */}
-          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate('/root/dashboard')}>
-            <img src={'/assets/logo/logo.png'} height={30} width={30} alt="logo" />
-            <Typography variant="h5" sx={{ pl: 1 }} noWrap component="div">
-            BasketIQ
-            </Typography>
-          </Box>
+        <Toolbar>
+          {/* Logo + Title */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              gap: 0.5,
+              ml: -2, 
+              py: 0.8,
+              borderRadius: 2,
+              paddingBottom: '2px',
+              transition: 'all 0.25s ease',
+              overflow: 'hidden', // 關鍵：防止放大後溢出影響 AppBar
+              height: 40, // 固定容器高度
+              '&:hover img': {
+                transform: 'scale(1.1)', // 放大圖片
+              },
+            }}
+            onClick={() => navigate('/root/dashboard')}
+          >
+            <Box
+              component="img"
+              src="/BasketIQ logo.png"
+              alt="BasketIQ Logo"
+              sx={{
+                height: '550%',
+                objectFit: 'contain',
+                display: 'block',
+                transition: 'transform 0.3s ease',
+                transformOrigin: 'center',
+              }}
+            />
+          </Box> 
+
 
           <Box sx={{ flexGrow: 1 }} />
 
+          {/* Chat */}
           <ChatPreviewDrawer
             open={isChatPreviewOpen}
-            onClose={() => setIsChatPreviewOpen(false)}
+            onClose={toggleChatPreview}
             messages={chatMessages}
           />
 
-          {/* Chat Preview Button */}
-          <IconButton color="inherit" onClick={() => setIsChatPreviewOpen(true)}>
+          <IconButton color="inherit" onClick={toggleChatPreview}>
             <Badge badgeContent={2} color="error">
               <ChatIcon />
             </Badge>
           </IconButton>
 
-          {/* Bouton Notifications */}
+          {/* Notifications */}
           <IconButton color="inherit" onClick={handleNotificationsOpen}>
-            <Badge badgeContent={notifications.filter(item => !item.read).length} color="error"> {/* Affiche 4 notifications non lues */}
+            <Badge badgeContent={notifications.filter((i) => !i.read).length} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
 
-          <Menu
-            anchorEl={notificationAnchorEl}
-            open={Boolean(notificationAnchorEl)}
-            onClose={handleNotificationsClose}
-            sx={{ mt: 1 }}
-          >
+          
+          <Menu anchorEl={notificationAnchorEl} open={Boolean(notificationAnchorEl)} onClose={handleNotificationsClose} sx={{ mt: 1 }}>
             <Box sx={{ maxWidth: 350, maxHeight: 300, overflowY: 'auto' }}>
               {notifications.length === 0 ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 150, p: 3 }}>
                   <Typography variant="body1" color="textSecondary">
-                  Pas de notifications
+          No notifications
                   </Typography>
                 </Box>
               ) : (
@@ -407,12 +284,8 @@ export default function Root() {
                           {notification.description}
                         </Typography>
                       </Box>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => handleDeleteNotification(e, notification.id)}
-                        sx={{ ml: 1 }}
-                      >
-                        <Close fontSize="small" sx={{height: 15, width: 15}} />
+                      <IconButton size="small" onClick={(e) => handleDeleteNotification(e, notification.id)} sx={{ ml: 1 }}>
+                        <Close fontSize="small" sx={{ height: 15, width: 15 }} />
                       </IconButton>
                     </MenuItem>
                   ))}
@@ -423,164 +296,80 @@ export default function Root() {
               <Box>
                 <Divider />
                 <MenuItem onClick={handleMarkAllAsRead} sx={{ justifyContent: 'center', fontWeight: 'bold' }}>
-                Marquer tout comme lu
+        Mark all as read
                 </MenuItem>
               </Box>
             )}
           </Menu>
 
-          {/* Avatar + Menu Profil */}
+          {/* Profile */}
           <IconButton onClick={handleProfileMenuOpen} sx={{ ml: 2 }}>
             <Avatar alt={user?.userProfile?.username} src={user.userProfile?.imageUrl} />
           </IconButton>
-          <Menu sx={{p: 5}} anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+          <Menu sx={{ p: 5 }} anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
             <MenuItem
               onClick={() => {
                 navigate('/root/profile');
                 handleMenuClose();
               }}
             >
-              <PersonIcon sx={{ mr: 1 }} />
-  Profil
+              <PersonIcon sx={{ mr: 1 }} /> Profile
             </MenuItem>
-
             <MenuItem disabled>
-              <CycloneIcon sx={{ mr: 1 }} /> Abonnement
+              <CycloneIcon sx={{ mr: 1 }} /> Subscription
             </MenuItem>
-            <MenuItem onClick={() => { navigate('/root/settings'); handleMenuClose(); }}>
-              <SettingsIcon sx={{ mr: 1 }} /> Paramètres
+            <MenuItem
+              onClick={() => {
+                navigate('/root/settings');
+                handleMenuClose();
+              }}
+            >
+              <SettingsIcon sx={{ mr: 1 }} /> Settings
             </MenuItem>
             <MenuItem onClick={handleLogout}>
-              <LogoutIcon sx={{ mr: 1 }} /> Déconnexion
+              <LogoutIcon sx={{ mr: 1 }} /> Log out
             </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
-      {
-        isMobile ? (
-          null
-        ) : (
 
+      {!isMobile && (
+        <LeftSportsDrawer
+          open={leftOpen}
+          onClose={() => setLeftOpen(false)}
+          width={drawerWidth}        // ← 一致
+          onJoin={(id) => {/* optional 導頁或 API */}}
+        />
+      )}
 
-          <Box sx={{ marginTop: '100px' }}>
-            <ComputerDrawer
-              open={open}
-              variant="permanent"
-              anchor="left"
-              sx={{
-                backgroundColor: '#f2f2f7', // 🍎 Apple-style gray
-                borderRight: '1px solidrgb(52, 52, 52)' // ✅ 加邊界讓它更清爽
-              }}
-            >
-              {/* 開合按鈕區塊 */}
-              <DrawerHeader sx={{ justifyContent: 'flex-end', px: 2 }}>
-                <Box
-                  onClick={open ? handleDrawerClose : handleDrawerOpen}
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: '50%',
-                    backgroundColor: '#e0e0e0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    boxShadow: 2,
-                    '&:hover': {
-                      backgroundColor: '#d5d5d5',
-                    },
-                  }}
-                >
-                  {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </Box>
-              </DrawerHeader>
+      {/* ---------- Main content ---------- */}
+      {isMobile ? (
+        <>
+          <MobileMain
+            sx={{
+              flexGrow: 1,
+              paddingBottom: '56px', // 預留 BottomNavigation 高度
+              width: '100%',
+              minHeight: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: Colors.background, // 手機版背景也要深色
+            }}
+          >
+            <HandleLoadingError isError={isError} isLoading={isLoading}>
+              <Outlet />
+            </HandleLoadingError>
 
-              {/* 比賽訊息區塊 */}
-              <List sx={{ px: 1, pt: 2 }}>
-                {[
-                  { date: '6/15', day: 'Mardi', place: 'Terrain Villejuif', interest: 8 },
-                  { date: '6/18', day: 'Vendredi', place: 'Gymnase Ivry', interest: 5 },
-                  { date: '6/20', day: 'Dimanche', place: 'Palais des Sports', interest: 12 },
-                  { date: '6/22', day: 'Mercredi', place: 'Paris 13e', interest: 7 },
-                ].map((game, index) => (
-                  <ListItem
-                    key={index}
-                    sx={{
-                      mb: 2,
-                      py: open ? 2 : 1,
-                      borderRadius: 2,
-                      boxShadow: 1,
-                      bgcolor: '#fff',
-                    }}
-                  >
-                    <Grid
-                      container
-                      spacing={1}
-                      alignItems="center"
-                      wrap="nowrap"
-                      sx={{
-                        minHeight: open ? 72 : 48,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      <Grid item xs={open ? 4 : 12}>
-                        <Typography
-                          variant="body2"
-                          noWrap
-                          sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
-                        >
-                          {game.place}
-                        </Typography>
-                        <Typography variant="caption">{game.day}</Typography>
-                      </Grid>
+            {/* Footer for mobile */}
+            <Footer />
+          </MobileMain>
 
-                      {open && (
-                        <Grid item xs={5}>
-                          <Typography variant="body2" noWrap>
-                            {game.place}
-                          </Typography>
-                        </Grid>
-                      )}
-
-                      {open && (
-                        <Grid item xs={3} textAlign="right">
-                          <Typography variant="body2" color="primary" fontWeight="medium">
-                            {game.interest} intéressés
-                          </Typography>
-                        </Grid>
-                      )}
-                    </Grid>
-                  </ListItem>
-                ))}
-              </List>
-
-              {/* 分隔線 + 其他 drawer 選單項目 */}
-              <Divider sx={{ my: 2 }} />
-              <List>{drawer}</List>
-            </ComputerDrawer>
-          </Box>
-
-        )
-      }
-      
-
-      
-      {
-        isMobile ?  (
-          <>
-            <MobileMain sx={{ flexGrow: 1, paddingBottom: '56px', width: '100%', minHeight: '100vh' }}>
-              <HandleLoadingError isError={isError} isLoading={isLoading}>
-                <Outlet />
-              </HandleLoadingError>
-            </MobileMain>
-            {navigationItems.filter(item => item.disable === false).length > 0 && <BottomNavigation
+          {navigationItems.filter((item) => item.disable === false).length > 0 && (
+            <BottomNavigation
               showLabels
               value={value}
               onChange={(event, newValue) => {
                 setValue(newValue);
-                // Appelle la fonction correspondante
                 navigationItems[newValue]?.function();
               }}
               sx={{
@@ -588,37 +377,88 @@ export default function Root() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                zIndex: theme.zIndex.drawer + 100, // encore plus sûr
+                zIndex: theme.zIndex.drawer + 100,
                 borderTop: '1px solid #ccc',
                 backgroundColor: Colors.white,
               }}
             >
-              {navigationItems.filter(item => item.disable === false).map((item, index) => (
-                <BottomNavigationAction
-                  sx={{
-                    '& .MuiBottomNavigationAction-label': {
-                      fontSize: item.id === 'appointment' ? '13px' : '14px', // tu peux adapter la taille ici
-                    }
-                  }}
-                  key={item.id}
-                  label={item.label}
-                  icon={item.icon}
-                  disabled={item.disable}
-                  value={index}
-                />
-              ))}
-            </BottomNavigation>}
-          </>
-        ) : (
-          <Box component="main" sx={{ backgroundColor: Colors.background, minHeight: '100vh', width: '100%'}}>
-            <DrawerHeader />
+              {navigationItems
+                .filter((item) => item.disable === false)
+                .map((item, index) => (
+                  <BottomNavigationAction
+                    sx={{
+                      '& .MuiBottomNavigationAction-label': {
+                        fontSize:
+                    item.id === 'appointment' ? '13px' : '14px',
+                      },
+                    }}
+                    key={item.id}
+                    label={item.label}
+                    icon={item.icon}
+                    disabled={item.disable}
+                    value={index}
+                  />
+                ))}
+            </BottomNavigation>
+          )}
+        </>
+      ) : (
+        
+        <Box
+          component="main"
+          sx={{
+            background: '#0B0F19',
+            minHeight: '100vh',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            
+          }}
+        >
+          <DrawerHeader />
+          <Box sx={{ flex: 1 }}>
             <HandleLoadingError isError={isError} isLoading={isLoading}>
               <Outlet />
             </HandleLoadingError>
           </Box>
-        )
-      }
-      <UserSetupModal open={showUserSetupModal} onClose={() => setShowUserSetupModal(false)} />
-    </Box>
+
+          {/* Footer for desktop */}
+          <Footer />
+        </Box>
+      )}
+
+      {/* ⬇️ 把浮動籃球按鈕放到 body（永遠在最上層） */}
+      <Portal>
+        {!isMobile && (
+          <IconButton
+            aria-label="toggle sports drawer"
+            onClick={() => setLeftOpen(v => !v)}
+            sx={{
+              position: 'fixed',
+              left: 20,
+              bottom: 20,
+              zIndex: (t) => t.zIndex.tooltip + 1, // 1501，壓過 Drawer/Backdrop
+              width: 50,
+              height: 50,
+              borderRadius: '50%',
+              background: 'linear-gradient(145deg, rgba(217,217,217,0.06), rgba(0,0,0,0.22))',
+              boxShadow: '0 10px 24px rgba(0,0,0,.38)',
+              transition: 'transform .18s ease, box-shadow .18s ease, background .18s ease',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 14px 32px rgba(0,0,0,.45)',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.28))',
+              },
+              '&:active': {
+                transform: 'scale(0.96)',
+                boxShadow: '0 6px 16px rgba(0,0,0,.42)',
+              },
+            }}
+          >
+            <SportsBasketballIcon sx={{ color: '#ffca28', fontSize: 42, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))' }} />
+          </IconButton>
+        )}
+      </Portal>
+    </Box> 
   );
 }

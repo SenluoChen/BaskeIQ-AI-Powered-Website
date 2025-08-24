@@ -1,5 +1,5 @@
 {
-  "appName": "Badminton",
+  "appName": "BasketIQ",
   "page": {
     "welcomePage": {
       "signUpLabel": "S'inscrire",
@@ -85,7 +85,7 @@
       "description": "Désolé, une érreur est arrivé"
     },
     "signIn": {
-      "title": "Badminton pro"
+      "title": "BasketIQ"
     },
     "firstSign": {
       "title": "Confirmation mot de passe"
