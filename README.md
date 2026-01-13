@@ -1,4 +1,8 @@
+
 # BasketIQ Website
+
+https://github.com/user-attachments/assets/626b4ed6-782a-4d9b-8481-88a4ef007d40
+
 
 BasketIQ is a modern web application for amateur basketball players, designed to make the basketball community more connected and engaged. It provides AI-powered personalized game analysis, a performance tracker, match information, social posts, real-time chat, and more.
 
